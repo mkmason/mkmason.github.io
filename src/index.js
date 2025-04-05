@@ -1,6 +1,7 @@
 const form = document.querySelector("#csvForm");
 const csvFileInput = document.querySelector("#csvInput");
 const weightText = document.querySelector("#maxValues");
+const scoreText = document.querySelector("#scores");
 let benchName = "Bench Press";
 let squatName = "Squat";
 let deadliftName = "Deadlift";
@@ -21,6 +22,8 @@ form.addEventListener("submit", function (e) {
   weightName = document.querySelector("#weightName").value;
   repsName = document.querySelector("#repsName").value;
   exerciseName = document.querySelector("#exerciseName").value;
+  let bodyWeight = document.querySelector("#bodyWeight").value;
+  let isFemale = document.querySelector("#sex").checked;
 
   reader.onload = function (e) {
     const csvArray = csvToArr(e.target.result, /[,;]/);
@@ -145,6 +148,13 @@ form.addEventListener("submit", function (e) {
       "Total: " + total + "kg\n" +
       "Total Estimate: " + total1RM.toFixed(2) + "kg\n";
     weightText.textContent = text;
+    let oldWilks = calculateOldWilks(bodyWeight, isFemale, total);
+    let newWilks = Calculate_NewWilks(bodyWeight, isFemale, total);
+    let dots = Calculate_DOTS(bodyWeight, isFemale, total);
+    let text2 = "Old Wilks Score: " + oldWilks + "\n" +
+      "New Wilks Score: " + newWilks + "\n" +
+      "DOTS Score: " + dots + "\n";
+    scoreText.textContent = text2;
     
     // Define Data
     const data = [{
@@ -256,4 +266,94 @@ function csvToArr(stringVal, splitter) {
     return object;
   });
   return formedArr;
+}
+
+function calculateOldWilks(bodyWeight, isFemale, weightLifted) {
+  const maleCoeff = [
+    -216.0475144,
+    16.2606339,
+    -0.002388645,
+    -0.00113732,
+    7.01863e-6,
+    -1.291e-8,
+  ];
+  const femaleCoeff = [
+    594.31747775582,
+    -27.23842536447,
+    0.82112226871,
+    -0.00930733913,
+    4.731582e-5,
+    -9.054e-8,
+  ];
+  let denominator = isFemale ? femaleCoeff[0] : maleCoeff[0];
+  let coeff = isFemale ? femaleCoeff : maleCoeff;
+  let minbw = isFemale ? 26.51 : 40;
+  let maxbw = isFemale ? 154.53 : 201.9;
+  let bw = Math.min(Math.max(bodyWeight, minbw), maxbw);
+  for (let i = 1; i < coeff.length; i++) {
+    denominator += coeff[i] * Math.pow(bw, i);
+  }
+
+  let score = (500 / denominator) * weightLifted;
+  return score.toFixed(2);
+}
+
+function Calculate_NewWilks(bodyWeight, isFemale, weightLifted) {
+  const maleCoeff = [
+    47.4617885411949,
+    8.47206137941125,
+    0.073694103462609,
+    -1.39583381094385e-3,
+    7.07665973070743e-6,
+    -1.20804336482315e-8,
+  ];
+  const femaleCoeff = [
+    -125.425539779509,
+    13.7121941940668,
+    -0.0330725063103405,
+    -1.0504000506583e-3,
+    9.38773881462799e-6,
+    -2.3334613884954e-8,
+  ];
+  let denominator = isFemale ? femaleCoeff[0] : maleCoeff[0];
+  let coeff = isFemale ? femaleCoeff : maleCoeff;
+  let minbw = 40;
+  let maxbw = isFemale ? 150.95 : 200.95;
+  let bw = Math.min(Math.max(bodyWeight, minbw), maxbw);
+
+  for (let i = 1; i < coeff.length; i++) {
+    denominator += coeff[i] * Math.pow(bw, i);
+  }
+
+  let score = (600 / denominator) * weightLifted;
+  return score.toFixed(2);
+}
+
+function Calculate_DOTS(bodyWeight, isFemale, weightLifted) {
+  const maleCoeff = [
+    -307.75076,
+    24.0900756,
+    -0.1918759221,
+    0.0007391293,
+    -0.000001093,
+  ];
+  const femaleCoeff = [
+    -57.96288,
+    13.6175032,
+    -0.1126655495,
+    0.0005158568,
+    -0.0000010706,
+  ];
+
+  let denominator = isFemale ? femaleCoeff[0] : maleCoeff[0];
+  let coeff = isFemale ? femaleCoeff : maleCoeff;
+  let maxbw = isFemale ? 150 : 210;
+  let bw = Math.min(Math.max(bodyWeight, 40), maxbw);
+
+  for (let i = 1; i < coeff.length; i++) {
+    denominator += coeff[i] * Math.pow(bw, i);
+  }
+
+  let score = (500 / denominator) * weightLifted;
+  return score.toFixed(2);
 }

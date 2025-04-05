@@ -25,6 +25,12 @@
         <label for="csvName">Exercise name:</label>
         <input type="text" id="exerciseName" value="Exercise" />
       </div>
+      <div>
+        <label for="bodyWeight">Body Weight:</label>
+        <input type="text" id="bodyWeight" value="80" />
+        <label>Female:</label>
+        <input type="checkbox" id="sex"/>
+      </div>
     <style>
       .plot-container {
         display: flex;
@@ -56,7 +62,9 @@
     <div>
         <h1>Powerlifting Total Progression</h1>
         <p>Upload your CSV file to see the powerlifting total progression.</p>
+        <p>Everything is in kilograms</p>
         <p id="maxValues">Maximum values will be displayed here.</p>
+        <p id="scores">Scores will be displayed here.</p>
     </div>
     <div class="plot-container">
         <div id="myPlot7"></div>
