@@ -1,32 +1,45 @@
 const form = document.querySelector("#csvForm");
 const csvFileInput = document.querySelector("#csvInput");
 const weightText = document.querySelector("#maxValues");
+let benchName = "Bench Press";
+let squatName = "Squat";
+let deadliftName = "Deadlift";
+let dateName = "Date";
+let weightName = "Weight";
+let repsName = "Reps";
+let exerciseName = "Exercise";
 
 form.addEventListener("submit", function (e) {
   e.preventDefault();
   const file = csvFileInput.files[0];
   const reader = new FileReader();
 
+  benchName = document.querySelector("#benchName").value;
+  squatName = document.querySelector("#squatName").value;
+  deadliftName = document.querySelector("#deadliftName").value;
+  dateName = document.querySelector("#dateName").value;
+  weightName = document.querySelector("#weightName").value;
+  repsName = document.querySelector("#repsName").value;
+  exerciseName = document.querySelector("#exerciseName").value;
+
   reader.onload = function (e) {
-    const csvArray = csvToArr(e.target.result, ",");
-    //console.log("textarea: ", textArea);
-    //textArea.value = JSON.stringify(csvArray, null, 4);
+    const csvArray = csvToArr(e.target.result, /[,;]/);
     const csvArrayCleaned = csvArray.map(row => {
       return {
-        [Object.keys(row)[0]]: row[Object.keys(row)[0]],
-        [Object.keys(row)[1]]: row[Object.keys(row)[1]],
-        [Object.keys(row)[3]]: row[Object.keys(row)[3]],
-        [Object.keys(row)[5]]: row[Object.keys(row)[5]]
+        [dateName]: row[dateName],
+        [exerciseName]: row[exerciseName],
+        [weightName]: row[weightName],
+        [repsName]: row[repsName]
       };
     });
     const filteredArray = csvArrayCleaned.filter(row => 
-      row["Exercise"] === "Bench Press" || 
-      row["Exercise"] === "Squat" || 
-      row["Exercise"] === "Deadlift"
+      row[exerciseName] === benchName || 
+      row[exerciseName] === squatName || 
+      row[exerciseName] === deadliftName
     );
     const enrichedArray = filteredArray.map(row => {
-      const weight = parseFloat(row["Weight"]);
-      const reps = parseFloat(row["Reps"]);
+      const weight = parseFloat(row[weightName]);
+      const reps = parseFloat(row[repsName]);
       if (reps <=10){
         row["1RM Estimate"] = (weight / (1.0278 - 0.0278 * reps)).toFixed(2);
       }
@@ -36,7 +49,6 @@ form.addEventListener("submit", function (e) {
       }
       return row;
     });
-
     const squatWeight = [];
     const benchPressWeight = [];
     const deadliftWeight = [];
@@ -54,11 +66,11 @@ form.addEventListener("submit", function (e) {
     let total = 0;
     let total1RM = 0;
     enrichedArray.forEach(function(row, index){
-      const exercise = row["Exercise"];
-      const weight = parseFloat(row["Weight"]);
+      const exercise = row[exerciseName];
+      const weight = parseFloat(row[weightName]);
       const oneRM = parseFloat(row["1RM Estimate"]);
       switch (exercise) {
-        case "Squat":
+        case squatName:
           if (weight > currentMaxWeightS) {
             squatWeight.push(row);
             testWeight.push(row);
@@ -76,7 +88,7 @@ form.addEventListener("submit", function (e) {
             currentMax1RMS = oneRM;
           }
           break;
-        case "Bench Press":
+        case benchName:
           if (weight > currentMaxWeightBP) {
             benchPressWeight.push(row);
             testWeight.push(row);
@@ -94,7 +106,7 @@ form.addEventListener("submit", function (e) {
             currentMax1RMBP = oneRM;
           }
           break;
-        case "Deadlift":
+        case deadliftName:
           if (weight > currentMaxWeightDL) {
             deadliftWeight.push(row);
             testWeight.push(row);
@@ -114,16 +126,16 @@ form.addEventListener("submit", function (e) {
           break;
       }
     });
-    let firstDate = new Date(enrichedArray[0]["Date"]);
-    let lastDate = new Date(enrichedArray[enrichedArray.length - 1]["Date"]);
-    const SWeight = squatWeight.map(row => ({ Weight: row["Weight"], Date: row["Date"] }));
-    const BPWeight = benchPressWeight.map(row => ({ Weight: row["Weight"], Date: row["Date"] }));
-    const DLWeight = deadliftWeight.map(row => ({ Weight: row["Weight"], Date: row["Date"] }));
-    const S1RM = squat1RM.map(row => ({ Weight: row["1RM Estimate"], Date: row["Date"] }));
-    const BP1RM = benchPress1RM.map(row => ({ Weight: row["1RM Estimate"], Date: row["Date"] }));
-    const DL1RM = deadlift1RM.map(row => ({ Weight: row["1RM Estimate"], Date: row["Date"] }));
-    const totalWeight = testWeight.map(row => ({ Weight: row["Total"], Date: row["Date"] }));
-    const total1RM2 = test1RM.map(row => ({ Weight: row["Total1RM"], Date: row["Date"] }));
+    let firstDate = new Date(enrichedArray[0][dateName]);
+    let lastDate = new Date(enrichedArray[enrichedArray.length - 1][dateName]);
+    const SWeight = squatWeight.map(row => ({ Weight: row[weightName], Date: row[dateName] }));
+    const BPWeight = benchPressWeight.map(row => ({ Weight: row[weightName], Date: row[dateName] }));
+    const DLWeight = deadliftWeight.map(row => ({ Weight: row[weightName], Date: row[dateName] }));
+    const S1RM = squat1RM.map(row => ({ Weight: row["1RM Estimate"], Date: row[dateName] }));
+    const BP1RM = benchPress1RM.map(row => ({ Weight: row["1RM Estimate"], Date: row[dateName] }));
+    const DL1RM = deadlift1RM.map(row => ({ Weight: row["1RM Estimate"], Date: row[dateName] }));
+    const totalWeight = testWeight.map(row => ({ Weight: row["Total"], Date: row[dateName] }));
+    const total1RM2 = test1RM.map(row => ({ Weight: row["Total1RM"], Date: row[dateName] }));
     let text = "Squat: " + currentMaxWeightS + "kg\n" +
       "Bench Press: " + currentMaxWeightBP + "kg\n" +
       "Deadlift: " + currentMaxWeightDL + "kg\n" +

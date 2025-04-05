@@ -9,6 +9,22 @@
         <input type="file" id="csvInput" accept=".csv" />
         <input type="submit" value="Submit" />
       </form>
+      <div id ="csvNaming">
+        <label for="csvName">Bench name:</label>
+        <input type="text" id="benchName" value="Bench Press" />
+        <label for="csvName">Squat name:</label>
+        <input type="text" id="squatName" value="Squat" />
+        <label for="csvName">Deadlift name:</label>
+        <input type="text" id="deadliftName" value="Deadlift" />
+        <label for="csvName">Date name:</label>
+        <input type="text" id="dateName" value="Date" />
+        <label for="csvName">Weight name:</label>
+        <input type="text" id="weightName" value="Weight" />
+        <label for="csvName">Reps name:</label>
+        <input type="text" id="repsName" value="Reps" />
+        <label for="csvName">Exercise name:</label>
+        <input type="text" id="exerciseName" value="Exercise" />
+      </div>
     <style>
       .plot-container {
         display: flex;
@@ -40,7 +56,6 @@
     <div>
         <h1>Powerlifting Total Progression</h1>
         <p>Upload your CSV file to see the powerlifting total progression.</p>
-        <p>Note: The CSV file should contain the following columns: "Squat", "Bench Press", "Deadlift".</p>
         <p id="maxValues">Maximum values will be displayed here.</p>
     </div>
     <div class="plot-container">
