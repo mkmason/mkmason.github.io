@@ -198,6 +198,7 @@ form.addEventListener("submit", function (e) {
     filteredData.sort((a, b) => parseFloat(a["TotalKg"]) - parseFloat(b["TotalKg"]));
     let placement = filteredData.findIndex(row => parseFloat(row["TotalKg"]) >= total) + 1;
     let placement1RM = filteredData.findIndex(row => parseFloat(row["TotalKg"]) >= total1RM) + 1;
+    let maxTotal = filteredData[filteredData.length - 1]["TotalKg"];
     const data9 = [{
       x: Array.from({ length: filteredData.length }, (_, i) => filteredData.length - i),
       y: filteredData.map(row => row["TotalKg"]),
@@ -228,9 +229,11 @@ form.addEventListener("submit", function (e) {
       line: { dash: "dash", color: "blue" },
       name: "Your Total 1RM Estimate"
     }];
+    let test2 = parseFloat(maxTotal) + 100;
+    console.log("test2: " + test2);
     const layout9 = {
       xaxis: {range: [0, filteredData.length + 1], title: "Placement"},
-      yaxis: {range: [0, 1300], title: "Total (kg)"},
+      yaxis: {range: [0, test2], title: "Total (kg)"},
       title: "Open Powerlifting Data (05-04-2025, Tested, Raw+Wraps, SBD)",
     };
     Plotly.newPlot("myPlot9", data9, layout9);
