@@ -16,18 +16,22 @@
         <input type="text" id="squatName" value="Squat" />
         <label for="csvName">Deadlift name:</label>
         <input type="text" id="deadliftName" value="Deadlift" />
-        <label for="csvName">Date name:</label>
+        <label for="csvName">Date header name:</label>
         <input type="text" id="dateName" value="Date" />
-        <label for="csvName">Weight name:</label>
+        <label for="csvName">Weight header name:</label>
         <input type="text" id="weightName" value="Weight" />
-        <label for="csvName">Reps name:</label>
+        <label for="csvName">Reps header name:</label>
         <input type="text" id="repsName" value="Reps" />
-        <label for="csvName">Exercise name:</label>
+        <label for="csvName">Exercise header name:</label>
         <input type="text" id="exerciseName" value="Exercise" />
       </div>
       <div>
         <label for="bodyWeight">Body Weight:</label>
         <input type="text" id="bodyWeight" value="80" />
+        <label for="bodyWeight">Body Weight lbs:</label>
+        <input type="checkbox" id="lbs"/>
+        <label for="bodyWeight">Lift lbs:</label>
+        <input type="checkbox" id="lbsLifted"/>
         <label>Female:</label>
         <input type="checkbox" id="sex"/>
       </div>
@@ -62,7 +66,7 @@
     <div>
         <h1>Powerlifting Total Progression</h1>
         <p>Upload your CSV file to see the powerlifting total progression.</p>
-        <p>Everything is in kilograms</p>
+        <p>Made to work with FitNotes csv naming by default</p>
         <p id="maxValues">Maximum values will be displayed here.</p>
         <p id="scores">Scores will be displayed here.</p>
     </div>
@@ -76,6 +80,7 @@
         <div id="myPlot5"></div>
         <div id="myPlot6"></div>
     </div>
+    <div id="myPlot9"></div>
       <script src="https://cdn.plot.ly/plotly-2.25.2.min.js"></script>
   </body>
 </html>

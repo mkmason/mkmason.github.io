@@ -9,11 +9,15 @@ let dateName = "Date";
 let weightName = "Weight";
 let repsName = "Reps";
 let exerciseName = "Exercise";
+let openPowerliftingData;
+fetchOpenPowerliftingData().then(data => {
+  openPowerliftingData = data;
+});
 
 form.addEventListener("submit", function (e) {
   e.preventDefault();
-  const file = csvFileInput.files[0];
   const reader = new FileReader();
+  const file = csvFileInput.files[0];
 
   benchName = document.querySelector("#benchName").value;
   squatName = document.querySelector("#squatName").value;
@@ -23,6 +27,12 @@ form.addEventListener("submit", function (e) {
   repsName = document.querySelector("#repsName").value;
   exerciseName = document.querySelector("#exerciseName").value;
   let bodyWeight = document.querySelector("#bodyWeight").value;
+  const lbConversionRate = 0.45359237;
+  let islbs = document.querySelector("#lbs").checked;
+  if (islbs) {
+    bodyWeight = bodyWeight * lbConversionRate;
+  }
+  let islbsLifted = document.querySelector("#lbsLifted").checked;
   let isFemale = document.querySelector("#sex").checked;
 
   reader.onload = function (e) {
@@ -40,6 +50,11 @@ form.addEventListener("submit", function (e) {
       row[exerciseName] === squatName || 
       row[exerciseName] === deadliftName
     );
+    if (islbsLifted) {
+      filteredArray.forEach(row => {
+        row[weightName] = (parseFloat(row[weightName]) * lbConversionRate).toFixed(2);
+      });
+    }
     const enrichedArray = filteredArray.map(row => {
       const weight = parseFloat(row[weightName]);
       const reps = parseFloat(row[repsName]);
@@ -148,14 +163,62 @@ form.addEventListener("submit", function (e) {
       "Total: " + total + "kg\n" +
       "Total Estimate: " + total1RM.toFixed(2) + "kg\n";
     weightText.textContent = text;
+
+    const mWeightClass = ['53', '59', '66', '74', '83', '93', '105', '120', '120+'];
+    const fWeightClass = ['43', '47', '52', '57', '63', '69', '76', '84', '84+'];
+    let femaleMaxWeight = 1000;
+    let maleMaxWeight = 1000;
+    if (isFemale) {
+      const fWeightClassIndex = fWeightClass.findIndex(weight => bodyWeight <= weight);
+      if (fWeightClassIndex !== -1) {
+        femaleMaxWeight = parseInt(fWeightClass[fWeightClassIndex], 10);
+      }
+    }
+    else {
+      const mWeightClassIndex = mWeightClass.findIndex(weight => bodyWeight <= weight);
+      if (mWeightClassIndex !== -1) {
+        maleMaxWeight = parseInt(mWeightClass[mWeightClassIndex], 10);
+      }
+    }
+    let filteredData = [];
+    if (isFemale) {
+      filteredData = openPowerliftingData.filter(row => row["Sex"] === "F" && parseFloat(row["BodyweightKg"]) <= femaleMaxWeight);
+    }
+    else {
+      filteredData = openPowerliftingData.filter(row => row["Sex"] === "M" && parseFloat(row["BodyweightKg"]) <= maleMaxWeight);
+    }
     let oldWilks = calculateOldWilks(bodyWeight, isFemale, total);
     let newWilks = Calculate_NewWilks(bodyWeight, isFemale, total);
     let dots = Calculate_DOTS(bodyWeight, isFemale, total);
     let text2 = "Old Wilks Score: " + oldWilks + "\n" +
       "New Wilks Score: " + newWilks + "\n" +
-      "DOTS Score: " + dots + "\n";
+      "DOTS Score: " + dots + "\n" + 
+      "Weight Class: " + (isFemale ? fWeightClass[fWeightClass.findIndex(weight => bodyWeight <= weight)] : mWeightClass[mWeightClass.findIndex(weight => bodyWeight <= weight)] +"kg");
     scoreText.textContent = text2;
-    
+    filteredData.sort((a, b) => parseFloat(a["TotalKg"]) - parseFloat(b["TotalKg"]));
+    const data9 = [{
+      x: Array.from({ length: filteredData.length }, (_, i) => filteredData.length - i),
+      y: filteredData.map(row => row["TotalKg"]),
+    }, {
+      x: [filteredData.length + 1, 0],
+      y: [total, total],
+      mode: "lines",
+      line: { dash: "dash", color: "red" },
+      name: "Your Total"
+    },
+    {
+      x: [filteredData.length + 1, 0],
+      y: [total1RM, total1RM],
+      mode: "lines",
+      line: { dash: "dash", color: "blue" },
+      name: "Your Total 1RM Estimate"
+    }];
+    const layout9 = {
+      xaxis: {range: [0, filteredData.length + 1], title: "Lifter"},
+      yaxis: {range: [0, 1300], title: "Total (kg)"},
+      title: "Open Powerlifting Data (05-04-2025)",
+    };
+    Plotly.newPlot("myPlot9", data9, layout9);
     // Define Data
     const data = [{
       x: SWeight.map(row => row.Date),
@@ -262,7 +325,11 @@ function csvToArr(stringVal, splitter) {
 
   const formedArr = rest.map((item) => {
     const object = {};
-    keys.forEach((key, index) => (object[key] = item.at(index)));
+    keys.forEach((key, index) => {
+      const cleanedKey = key.trim().replace(/\r/g, "");
+      const cleanedValue = item.at(index)?.trim().replace(/\r/g, "");
+      object[cleanedKey] = cleanedValue;
+    });
     return object;
   });
   return formedArr;
@@ -356,4 +423,17 @@ function Calculate_DOTS(bodyWeight, isFemale, weightLifted) {
 
   let score = (500 / denominator) * weightLifted;
   return score.toFixed(2);
+}
+
+
+async function fetchOpenPowerliftingData() {
+  try {
+    const response = await fetch("data/cleaned_data.csv");
+    const data = await response.text();
+    const parsedData = csvToArr(data, ',');
+    return parsedData;
+  }
+  catch (error) {
+    console.error("Error fetching Open Powerlifting data:", error);
+  }
 }
