@@ -196,9 +196,24 @@ form.addEventListener("submit", function (e) {
       "Weight Class: " + (isFemale ? fWeightClass[fWeightClass.findIndex(weight => bodyWeight <= weight)] : mWeightClass[mWeightClass.findIndex(weight => bodyWeight <= weight)] +"kg");
     scoreText.textContent = text2;
     filteredData.sort((a, b) => parseFloat(a["TotalKg"]) - parseFloat(b["TotalKg"]));
+    let placement = filteredData.findIndex(row => parseFloat(row["TotalKg"]) >= total) + 1;
+    let placement1RM = filteredData.findIndex(row => parseFloat(row["TotalKg"]) >= total1RM) + 1;
     const data9 = [{
       x: Array.from({ length: filteredData.length }, (_, i) => filteredData.length - i),
       y: filteredData.map(row => row["TotalKg"]),
+    }, {
+      x: [filteredData.length + 1 - placement, filteredData.length + 1 - placement],
+      y: [0, total],
+      mode: "lines",
+      line: { dash: "dash", color: "red" },
+      name: "Your Placement"
+    },
+    {
+      x: [filteredData.length + 1 - placement1RM, filteredData.length + 1 - placement1RM],
+      y: [0, total1RM],
+      mode: "lines",
+      line: { dash: "dash", color: "blue" },
+      name: "Your 1RM Placement Estimate"
     }, {
       x: [filteredData.length + 1, 0],
       y: [total, total],
@@ -214,9 +229,9 @@ form.addEventListener("submit", function (e) {
       name: "Your Total 1RM Estimate"
     }];
     const layout9 = {
-      xaxis: {range: [0, filteredData.length + 1], title: "Lifter"},
+      xaxis: {range: [0, filteredData.length + 1], title: "Placement"},
       yaxis: {range: [0, 1300], title: "Total (kg)"},
-      title: "Open Powerlifting Data (05-04-2025)",
+      title: "Open Powerlifting Data (05-04-2025, Tested, Raw+Wraps, SBD)",
     };
     Plotly.newPlot("myPlot9", data9, layout9);
     // Define Data
