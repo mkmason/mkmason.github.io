@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Muscle Group Planner</title>
+    <meta charset="UTF-8" />
+  </head>
+  <a href="index.html" class="home-button">Home</a>
+  <body>
+    <h1>Muscle Group Planner</h1>
+
+    <form id="muscleGroupForm">
+      <label for="muscleGroup">Select a muscle group:</label>
+      <select id="muscleGroup" name="muscleGroup">
+        <option value="Chest">Chest</option>
+        <option value="Back">Back</option>
+        <option value="Quad">Quad</option>
+        <option value="Hamstring">Hamstring</option>
+        <option value="Bicep">Bicep</option>
+        <option value="Tricep">Tricep</option>
+        <option value="Core">Core</option>
+        <option value="Calves">Calves</option>
+        <option value="Forearms">Forearms</option>
+        <option value="Shoulder">Shoulders</option>
+        <option value="Glutes">Glutes</option>
+      </select>
+
+      <label for="day">Select a day:</label>
+      <select id="day" name="day">
+        <option value="Monday">Monday</option>
+        <option value="Tuesday">Tuesday</option>
+        <option value="Wednesday">Wednesday</option>
+        <option value="Thursday">Thursday</option>
+        <option value="Friday">Friday</option>
+        <option value="Saturday">Saturday</option>
+        <option value="Sunday">Sunday</option>
+      </select>
+
+      <button type="button" onclick="addExercise()">Add Exercise</button>
+      <button type="button" onclick="removeExercise()">Remove Exercise</button>
+      <button type="button" onclick="clearPlan()">Clear Plan</button>
+        <button type="button" onclick="savePlan()">Save Plan</button>
+        <button type="button" onclick="loadPlan()">Load Plan</button>
+    </form>
+
+    <h2>Your Workout Plan</h2>
+        <div id="calendar">
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Monday</th>
+                        <th>Tuesday</th>
+                        <th>Wednesday</th>
+                        <th>Thursday</th>
+                        <th>Friday</th>
+                        <th>Saturday</th>
+                        <th>Sunday</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td id="Monday"></td>
+                        <td id="Tuesday"></td>
+                        <td id="Wednesday"></td>
+                        <td id="Thursday"></td>
+                        <td id="Friday"></td>
+                        <td id="Saturday"></td>
+                        <td id="Sunday"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    <script src="src/weeklyPlanner.js"></script>
+    <style>
+        .home-button {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          padding: 10px 15px;
+          background-color: #007BFF;
+          color: white;
+          text-decoration: none;
+          border-radius: 5px;
+          font-size: 14px;
+        }
+        .home-button:hover {
+          background-color: #0056b3;
+        }
+      </style>
+  </body>
