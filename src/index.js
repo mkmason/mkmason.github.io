@@ -47,11 +47,31 @@ form.addEventListener("submit", function (e) {
         [repsName]: row[repsName]
       };
     });
+      if (csvArrayCleaned[0][dateName] === undefined) {
+        alert("Invalid CSV file. Please check the file format.");
+        return;
+      }
+      if (csvArrayCleaned[0][exerciseName] === undefined) {
+        alert("Invalid CSV file. Please check the file format.");
+        return;
+      }
+      if (csvArrayCleaned[0][weightName] === undefined) {
+        alert("Invalid CSV file. Please check the file format.");
+        return;
+      }
+      if (csvArrayCleaned[0][repsName] === undefined) {
+        alert("Invalid CSV file. Please check the file format.");
+        return;
+      }
     const filteredArray = csvArrayCleaned.filter(row => 
       row[exerciseName] === benchName || 
       row[exerciseName] === squatName || 
       row[exerciseName] === deadliftName
     );
+    if (filteredArray.length === 0) {
+      alert("No matching exercises found in the CSV file.");
+      return;
+    }
     if (islbsLifted) {
       filteredArray.forEach(row => {
         row[weightName] = (parseFloat(row[weightName]) * lbConversionRate).toFixed(2);
@@ -208,10 +228,10 @@ form.addEventListener("submit", function (e) {
     filteredData.sort((a, b) => parseFloat(a["TotalKg"]) - parseFloat(b["TotalKg"]));
     let placement = filteredData.findIndex(row => parseFloat(row["TotalKg"]) >= total) + 1;
     let placement1RM = filteredData.findIndex(row => parseFloat(row["TotalKg"]) >= total1RM) + 1;
-    let maxTotal = filteredData[filteredData.length - 1]["TotalKg"];
     const data9 = [{
       x: Array.from({ length: filteredData.length }, (_, i) => filteredData.length - i),
       y: filteredData.map(row => row["TotalKg"]),
+      name: "Open Powerlifting Data",
     }, {
       x: [filteredData.length + 1 - placement, filteredData.length + 1 - placement],
       y: [0, total],
@@ -229,21 +249,33 @@ form.addEventListener("submit", function (e) {
       x: [filteredData.length + 1, 0],
       y: [total, total],
       mode: "lines",
-      line: { dash: "dash", color: "red" },
+      line: { dash: "dash", color: "green" },
       name: "Your Total"
     },
     {
       x: [filteredData.length + 1, 0],
       y: [total1RM, total1RM],
       mode: "lines",
-      line: { dash: "dash", color: "blue" },
+      line: { dash: "dash", color: "purple" },
       name: "Your Total 1RM Estimate"
     }];
-    let test2 = parseFloat(maxTotal) + 100;
+    let weightClassValue;
+    if (isFemale) {
+      if (femaleMaxWeight === 1000) {
+        weightClassValue = "84+";
+      }
+      else{weightClassValue = femaleMaxWeight};
+    }
+    else {
+      if (maleMaxWeight === 1000) {
+        weightClassValue = "120+";
+      }
+      else{weightClassValue = maleMaxWeight};
+    }
     const layout9 = {
       xaxis: {range: [0, filteredData.length + 1], title: "Placement"},
-      yaxis: {range: [0, test2], title: "Total (kg)"},
-      title: "Open Powerlifting Data (05-04-2025, Tested, Raw+Wraps, SBD) " + "Weight Class: " + (isFemale ? fWeightClass[fWeightClass.findIndex(weight => bodyWeight <= weight)] : mWeightClass[mWeightClass.findIndex(weight => bodyWeight <= weight)] +"kg"),
+      yaxis: {range: [0, parseFloat(filteredData[filteredData.length - 1]["TotalKg"]) + 100], title: "Total (kg)"},
+      title: "Open Powerlifting Data (05-04-2025, Tested, Raw+Wraps, SBD) " + "Weight Class: " + weightClassValue + "kg",
     };
     Plotly.newPlot("myPlot9", data9, layout9);
     // Define Data
