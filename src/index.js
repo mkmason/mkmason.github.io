@@ -1,7 +1,9 @@
 const form = document.querySelector("#csvForm");
 const csvFileInput = document.querySelector("#csvInput");
 const weightText = document.querySelector("#maxValues");
+const weightText2 = document.querySelector("#maxValues2");
 const scoreText = document.querySelector("#scores");
+const scoreText2 = document.querySelector("#scores2");
 let benchName = "Bench Press";
 let squatName = "Squat";
 let deadliftName = "Deadlift";
@@ -157,18 +159,20 @@ form.addEventListener("submit", function (e) {
     let text = "Squat: " + currentMaxWeightS + "kg\n" +
       "Bench Press: " + currentMaxWeightBP + "kg\n" +
       "Deadlift: " + currentMaxWeightDL + "kg\n" +
-      "Squat 1RM Estimate: " + currentMax1RMS + "kg\n" +
+      "Total: " + total + "kg\n";
+      let text4 ="Squat 1RM Estimate: " + currentMax1RMS + "kg\n" +
       "Bench Press 1RM Estimate: " + currentMax1RMBP + "kg\n" +
       "Deadlift 1RM Estimate: " + currentMax1RMDL + "kg\n" +
-      "Total: " + total + "kg\n" +
       "Total Estimate: " + total1RM.toFixed(2) + "kg\n";
     weightText.textContent = text;
+    weightText2.textContent = text4;
 
-    const mWeightClass = ['53', '59', '66', '74', '83', '93', '105', '120', '120+'];
-    const fWeightClass = ['43', '47', '52', '57', '63', '69', '76', '84', '84+'];
+    const mWeightClass = [53, 59, 66, 74, 83, 93, 105, 120, 1000];
+    const fWeightClass = [43, 47, 52, 57, 63, 69, 76, 84, 1000];
     let femaleMaxWeight = 1000;
     let maleMaxWeight = 1000;
     if (isFemale) {
+      //const fWeightClassIndex = fWeightClass.filter(weight <= bodyWeight);
       const fWeightClassIndex = fWeightClass.findIndex(weight => bodyWeight <= weight);
       if (fWeightClassIndex !== -1) {
         femaleMaxWeight = parseInt(fWeightClass[fWeightClassIndex], 10);
@@ -188,13 +192,19 @@ form.addEventListener("submit", function (e) {
       filteredData = openPowerliftingData.filter(row => row["Sex"] === "M" && parseFloat(row["BodyweightKg"]) <= maleMaxWeight);
     }
     let oldWilks = calculateOldWilks(bodyWeight, isFemale, total);
+    let oldWilks1RM = calculateOldWilks(bodyWeight, isFemale, total1RM);
     let newWilks = Calculate_NewWilks(bodyWeight, isFemale, total);
+    let newWilks1RM = Calculate_NewWilks(bodyWeight, isFemale, total1RM);
     let dots = Calculate_DOTS(bodyWeight, isFemale, total);
+    let dots1RM = Calculate_DOTS(bodyWeight, isFemale, total1RM);
     let text2 = "Old Wilks Score: " + oldWilks + "\n" +
       "New Wilks Score: " + newWilks + "\n" +
-      "DOTS Score: " + dots + "\n" + 
-      "Weight Class: " + (isFemale ? fWeightClass[fWeightClass.findIndex(weight => bodyWeight <= weight)] : mWeightClass[mWeightClass.findIndex(weight => bodyWeight <= weight)] +"kg");
+      "DOTS Score: " + dots;
+    let text3 ="Old Wilks 1RM Estimate Score: " + oldWilks1RM + "\n" +
+      "New Wilks 1RM Estimate Score: " + newWilks1RM + "\n" +
+      "DOTS 1RM Estimate Score: " + dots1RM;
     scoreText.textContent = text2;
+    scoreText2.textContent = text3;
     filteredData.sort((a, b) => parseFloat(a["TotalKg"]) - parseFloat(b["TotalKg"]));
     let placement = filteredData.findIndex(row => parseFloat(row["TotalKg"]) >= total) + 1;
     let placement1RM = filteredData.findIndex(row => parseFloat(row["TotalKg"]) >= total1RM) + 1;
@@ -230,11 +240,10 @@ form.addEventListener("submit", function (e) {
       name: "Your Total 1RM Estimate"
     }];
     let test2 = parseFloat(maxTotal) + 100;
-    console.log("test2: " + test2);
     const layout9 = {
       xaxis: {range: [0, filteredData.length + 1], title: "Placement"},
       yaxis: {range: [0, test2], title: "Total (kg)"},
-      title: "Open Powerlifting Data (05-04-2025, Tested, Raw+Wraps, SBD)",
+      title: "Open Powerlifting Data (05-04-2025, Tested, Raw+Wraps, SBD) " + "Weight Class: " + (isFemale ? fWeightClass[fWeightClass.findIndex(weight => bodyWeight <= weight)] : mWeightClass[mWeightClass.findIndex(weight => bodyWeight <= weight)] +"kg"),
     };
     Plotly.newPlot("myPlot9", data9, layout9);
     // Define Data
