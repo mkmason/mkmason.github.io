@@ -35,8 +35,8 @@
         <option value="Sunday">Sunday</option>
       </select>
 
-      <button type="button" onclick="addExercise()">Add Exercise</button>
-      <button type="button" onclick="removeExercise()">Remove Exercise</button>
+      <button type="button" onclick="addExercise()">Add Group</button>
+      <button type="button" onclick="removeExercise()">Remove Group</button>
       <button type="button" onclick="clearPlan()">Clear Plan</button>
         <button type="button" onclick="savePlan()">Save Plan</button>
         <button type="button" onclick="loadPlan()">Load Plan</button>
@@ -68,6 +68,25 @@
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <h2>Statistics</h2>
+        <div id="statistics">
+            <p><b>Total Enteries: </b><span id="totalExercises">0</span></p>
+            <p><b>Muscle Groups Targeted: </b><span id="muscleGroupsTargeted">0</span>/11</p>
+            <p><b>Workout Days: </b><span id="daysPlanned">0</span>/7</p>
+            <p><b>Chest Days: </b><span id="chestDays">0</span><b> Minimum Days Between: </b><span id="chestRestDays">7</span></p>
+            <p><b>Back Days:</b> <span id="backDays">0</span> <b>Minimum Days Between:</b> <span id="backRestDays">7</span></p>
+            <p><b>Quad Days:</b> <span id="quadDays">0</span> <b>Minimum Days Between:</b> <span id="quadRestDays">7</span></p>
+            <p><b>Hamstring Days:</b> <span id="hamstringDays">0</span> <b>Minimum Days Between:</b> <span id="hamstringRestDays">7</span></p>
+            <p><b>Bicep Days:</b> <span id="bicepDays">0</span> <b>Minimum Days Between:</b> <span id="bicepRestDays">7</span></p>
+            <p><b>Tricep Days:</b> <span id="tricepDays">0</span> <b>Minimum Days Between:</b> <span id="tricepRestDays">7</span></p>
+            <p><b>Core Days:</b> <span id="coreDays">0</span> <b>Minimum Days Between:</b> <span id="coreRestDays">7</span></p>
+            <p><b>Calves Days:</b> <span id="calvesDays">0</span> <b>Minimum Days Between:</b> <span id="calvesRestDays">7</span></p>
+            <p><b>Forearms Days:</b> <span id="forearmsDays">0</span> <b>Minimum Days Between:</b> <span id="forearmsRestDays">7</span></p>
+            <p><b>Shoulder Days:</b> <span id="shoulderDays">0</span> <b>Minimum Days Between:</b> <span id="shoulderRestDays">7</span></p>
+            <p><b>Glutes Days:</b> <span id="glutesDays">0</span> <b>Minimum Days Between:</b> <span id="glutesRestDays">7</span></p>
+            <p><b>Rest Days:</b> <span id="restDays">7</span>/7</p>
         </div>
 
     <script src="src/weeklyPlanner.js"></script>
