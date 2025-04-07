@@ -1,4 +1,5 @@
 let muscleGroup = document.querySelector("#muscleGroup");
+let muscleSplit = document.querySelector("#muscleSplit");
 let day = document.querySelector("#day");
 let calender = document.querySelector("#calendar");
 let monday = document.querySelector("#Monday");
@@ -40,54 +41,43 @@ let forearmRestDays = document.querySelector("#forearmsRestDays");
 function addExercise() {
 muscleGroup = document.querySelector("#muscleGroup").value;
 day = document.querySelector("#day").value;
-if (!scheduleArray.some(entry => entry.muscleGroup === muscleGroup && entry.day === day)) {
-    scheduleArray.push({ muscleGroup, day });
-} else {
-    alert("This muscle group is already scheduled for the selected day.");
-    return;
+addToPlan(day, muscleGroup);
 }
-statistics();
-switch (day) {
-    case "Monday":
-        monday.innerHTML += muscleGroup + "<br>";
-        break;
-    case "Tuesday":
-        tuesday.innerHTML += muscleGroup + "<br>";
-        break;
-    case "Wednesday":
-        wednesday.innerHTML += muscleGroup + "<br>";
-        break;
-    case "Thursday":
-        thursday.innerHTML += muscleGroup + "<br>";
-        break;
-    case "Friday":
-        friday.innerHTML += muscleGroup + "<br>";
-        break;
-    case "Saturday":
-        saturday.innerHTML += muscleGroup + "<br>";
-        break;
-    case "Sunday":
-        sunday.innerHTML += muscleGroup + "<br>";
-        break;
-    default:
-        alert("Please select a valid day.");
-}};
 
-function clearPlan() {
-    scheduleArray = [];
-    monday.innerHTML = "";
-    tuesday.innerHTML = "";
-    wednesday.innerHTML = "";
-    thursday.innerHTML = "";
-    friday.innerHTML = "";
-    saturday.innerHTML = "";
-    sunday.innerHTML = "";
+function addToPlan(day, muscleGroup) {
+    if (!scheduleArray.some(entry => entry.muscleGroup === muscleGroup && entry.day === day)) {
+        scheduleArray.push({ muscleGroup, day });
+    } else {
+        console.log("This muscle group is already scheduled for the selected day.");
+        return;
+    }
     statistics();
-}
-
-function removeExercise() {
-    muscleGroup = document.querySelector("#muscleGroup").value;
-    day = document.querySelector("#day").value;
+    switch (day) {
+        case "Monday":
+            monday.innerHTML += muscleGroup + "<br>";
+            break;
+        case "Tuesday":
+            tuesday.innerHTML += muscleGroup + "<br>";
+            break;
+        case "Wednesday":
+            wednesday.innerHTML += muscleGroup + "<br>";
+            break;
+        case "Thursday":
+            thursday.innerHTML += muscleGroup + "<br>";
+            break;
+        case "Friday":
+            friday.innerHTML += muscleGroup + "<br>";
+            break;
+        case "Saturday":
+            saturday.innerHTML += muscleGroup + "<br>";
+            break;
+        case "Sunday":
+            sunday.innerHTML += muscleGroup + "<br>";
+            break;
+        default:
+            alert("Please select a valid day.");
+    }};
+function removeFromPlan(day, muscleGroup) {
     scheduleArray = scheduleArray.filter(entry => !(entry.muscleGroup === muscleGroup && entry.day === day));
     statistics();
     switch (day) {
@@ -114,7 +104,123 @@ function removeExercise() {
             break;
         default:
             alert("Please select a valid day.");
-}}
+}
+}
+function addSplit() {
+    muscleSplit = document.querySelector("#muscleSplit").value;
+    day = document.querySelector("#day").value;
+    switch (muscleSplit) {
+        case "Lower":
+            addToPlan(day, "Calves");
+            addToPlan(day, "Glutes");
+            addToPlan(day, "Hamstring");
+            addToPlan(day, "Quad");
+            break;
+        case "Full Body":
+            addToPlan(day, "Back");
+            addToPlan(day, "Bicep");
+            addToPlan(day, "Calves");
+            addToPlan(day, "Chest");
+            addToPlan(day, "Core");
+            addToPlan(day, "Forearms");
+            addToPlan(day, "Glutes");
+            addToPlan(day, "Hamstring");
+            addToPlan(day, "Quad");
+            addToPlan(day, "Shoulder");
+            addToPlan(day, "Tricep");
+            break;
+        case "Push":
+            addToPlan(day, "Chest");
+            addToPlan(day, "Shoulder");
+            addToPlan(day, "Tricep");
+            break;
+        case "Pull":
+            addToPlan(day, "Back");
+            addToPlan(day, "Bicep");
+            addToPlan(day, "Forearms");
+            break;
+        case "Upper":
+            addToPlan(day, "Back");
+            addToPlan(day, "Bicep");
+            addToPlan(day, "Chest");
+            addToPlan(day, "Forearms");
+            addToPlan(day, "Shoulder");
+            addToPlan(day, "Tricep");
+            break;
+        case "Arms":
+            addToPlan(day, "Bicep");
+            addToPlan(day, "Forearms");
+            addToPlan(day, "Tricep");
+            break;
+        default:
+            alert("Please select a valid muscle split.");
+    }
+}
+function removeSplit() {
+    muscleSplit = document.querySelector("#muscleSplit").value;
+    day = document.querySelector("#day").value;
+    switch (muscleSplit) {
+        case "Lower":
+            removeFromPlan(day, "Quad");
+            removeFromPlan(day, "Hamstring");
+            removeFromPlan(day, "Calves");
+            removeFromPlan(day, "Glutes");
+            break;
+        case "Full Body":
+            removeFromPlan(day, "Chest");
+            removeFromPlan(day, "Back");
+            removeFromPlan(day, "Quad");
+            removeFromPlan(day, "Hamstring");
+            removeFromPlan(day, "Shoulder");
+            removeFromPlan(day, "Core");
+            removeFromPlan(day, "Bicep");
+            removeFromPlan(day, "Tricep");
+            removeFromPlan(day, "Calves");
+            removeFromPlan(day, "Glutes");
+            removeFromPlan(day, "Forearms");
+            break;
+        case "Push":
+            removeFromPlan(day, "Chest");
+            removeFromPlan(day, "Shoulder");
+            removeFromPlan(day, "Tricep");
+            break;
+        case "Pull":
+            removeFromPlan(day, "Back");
+            removeFromPlan(day, "Bicep");
+            removeFromPlan(day, "Forearms");
+            break;
+        case "Upper":
+            removeFromPlan(day, "Chest");
+            removeFromPlan(day, "Back");
+            removeFromPlan(day, "Shoulder");
+            removeFromPlan(day, "Bicep");
+            removeFromPlan(day, "Tricep");
+            removeFromPlan(day, "Forearms");
+            break;
+        case "Arms":
+            removeFromPlan(day, "Bicep");
+            removeFromPlan(day, "Tricep");
+            removeFromPlan(day, "Forearms");
+    }
+}
+
+function clearPlan() {
+    scheduleArray = [];
+    monday.innerHTML = "";
+    tuesday.innerHTML = "";
+    wednesday.innerHTML = "";
+    thursday.innerHTML = "";
+    friday.innerHTML = "";
+    saturday.innerHTML = "";
+    sunday.innerHTML = "";
+    statistics();
+}
+
+function removeExercise() {
+    muscleGroup = document.querySelector("#muscleGroup").value;
+    day = document.querySelector("#day").value;
+    removeFromPlan(day, muscleGroup);
+    }
 function savePlan() {
     const plan = JSON.stringify(scheduleArray);
     localStorage.setItem("weeklyPlan", plan);
@@ -204,7 +310,8 @@ function calculateMinRestDays(group) {
     const days = scheduleArray
         .filter(entry => entry.muscleGroup === group)
         .map(entry => entry.day);
-    if (days.length === 0 || days.length === 7) return 7;
+    if (days.length === 0) return 7;
+    else if (days.length === 7) return 0;
     else if (days.length === 1) return 6;
     else{
         return daysBetweenWeekdaysArray(days);

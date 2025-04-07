@@ -11,17 +11,17 @@
     <form id="muscleGroupForm">
       <label for="muscleGroup">Select a muscle group:</label>
       <select id="muscleGroup" name="muscleGroup">
-        <option value="Chest">Chest</option>
-        <option value="Back">Back</option>
-        <option value="Quad">Quad</option>
-        <option value="Hamstring">Hamstring</option>
-        <option value="Bicep">Bicep</option>
-        <option value="Tricep">Tricep</option>
-        <option value="Core">Core</option>
-        <option value="Calves">Calves</option>
-        <option value="Forearms">Forearms</option>
-        <option value="Shoulder">Shoulders</option>
-        <option value="Glutes">Glutes</option>
+          <option value="Back">Back</option>
+          <option value="Bicep">Bicep</option>
+          <option value="Calves">Calves</option>
+          <option value="Chest">Chest</option>
+          <option value="Core">Core</option>
+          <option value="Forearms">Forearms</option>
+          <option value="Glutes">Glutes</option>
+          <option value="Hamstring">Hamstring</option>
+          <option value="Quad">Quad</option>
+          <option value="Shoulder">Shoulders</option>
+          <option value="Tricep">Tricep</option>
       </select>
 
       <label for="day">Select a day:</label>
@@ -41,6 +41,19 @@
         <button type="button" onclick="savePlan()">Save Plan</button>
         <button type="button" onclick="loadPlan()">Load Plan</button>
     </form>
+    <form id="muscleSplitForm">
+        <label for="muscleSplit">Select a muscle split:</label>
+        <select id="muscleSplit" name="muscleSplit">
+          <option value="Push">Push</option>
+          <option value="Pull">Pull</option>
+          <option value="Upper">Upper</option>
+          <option value="Lower">Lower</option>
+          <option value="Arms">Arms</option>
+          <option value="Full Body">Full Body</option>
+        </select>
+        <button type="button" onclick="addSplit()">Add Split</button>
+        <button type="button" onclick="removeSplit()">Remove Split</button>
+      </form>
 
     <h2>Your Workout Plan</h2>
         <div id="calendar">
