@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>360 Image</title>
+        <meta charset="UTF-8" />
+        <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #image-container {
+            width: 90%;
+            height: 90%;
+            overflow: hidden;
+            position: relative;
+        }
+        #image-container img {
+            width: 100%;
+            height: auto;
+        }
+        .home-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 10px 15px;
+        background-color: #007BFF;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 14px;
+      }
+      .home-button:hover {
+        background-color: #0056b3;
+      }
+        </style>
+    </head>
+    <a href="index.html" class="home-button">Home</a>
+    <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+    <body>
+        <div id="image-container">
+            <a-scene embedded>
+                <a-entity camera look-controls="reverseMouseDrag: true"></a-entity>
+                <a-sky src="data/imageTest.jpg"></a-sky>
+            </a-scene>
+        </div>
+    </body>
+</html>

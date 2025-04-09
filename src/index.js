@@ -14,6 +14,19 @@ let exerciseName = "Exercise";
 let openPowerliftingData;
 fetchOpenPowerliftingData().then(data => {
   openPowerliftingData = data;
+  let initialOPLData = openPowerliftingData.filter(row => row["Sex"] === "M" && parseFloat(row["BodyweightKg"]) <= 83);
+  initialOPLData.sort((a, b) => parseFloat(a["TotalKg"]) - parseFloat(b["TotalKg"]));
+  const data10 = [{
+    x: Array.from({ length: initialOPLData.length }, (_, i) => initialOPLData.length - i),
+    y: initialOPLData.map(row => row["TotalKg"]),
+    name: "Open Powerlifting Data",
+  }];
+  const layout10 = {
+        xaxis: {range: [0, initialOPLData.length + 1], title: "Placement"},
+        yaxis: {range: [0, parseFloat(initialOPLData[initialOPLData.length - 1]["TotalKg"]) + 100], title: "Total (kg)"},
+        title: "Open Powerlifting Data (05-04-2025, Tested, Raw+Wraps, SBD) " + "Weight Class: 83kg",
+  };
+  Plotly.newPlot("myPlot9", data10, layout10);
 });
 
 form.addEventListener("submit", function (e) {
@@ -36,6 +49,7 @@ form.addEventListener("submit", function (e) {
   }
   let islbsLifted = document.querySelector("#lbsLifted").checked;
   let isFemale = document.querySelector("#sex").checked;
+  let isWeightClassLimited = document.querySelector("#weightClassCheck").checked;
 
   reader.onload = function (e) {
     const csvArray = csvToArr(e.target.result, /[,;]/);
@@ -191,15 +205,25 @@ form.addEventListener("submit", function (e) {
     const fWeightClass = [43, 47, 52, 57, 63, 69, 76, 84, 1000];
     let femaleMaxWeight = 1000;
     let maleMaxWeight = 1000;
+    let femaleMinWeight = 0;
+    let maleMinWeight = 0;
     if (isFemale) {
       //const fWeightClassIndex = fWeightClass.filter(weight <= bodyWeight);
       const fWeightClassIndex = fWeightClass.findIndex(weight => bodyWeight <= weight);
+      let fWeightClassBelow = fWeightClassIndex - 1;
+      if (fWeightClassBelow !== -1) {
+        femaleMinWeight = parseInt(fWeightClass[fWeightClassBelow], 10);
+      }
       if (fWeightClassIndex !== -1) {
         femaleMaxWeight = parseInt(fWeightClass[fWeightClassIndex], 10);
       }
     }
     else {
       const mWeightClassIndex = mWeightClass.findIndex(weight => bodyWeight <= weight);
+      let mWeightClassBelow = mWeightClassIndex - 1;
+      if (mWeightClassBelow !== -1) {
+        maleMinWeight = parseInt(mWeightClass[mWeightClassBelow], 10);
+      }
       if (mWeightClassIndex !== -1) {
         maleMaxWeight = parseInt(mWeightClass[mWeightClassIndex], 10);
       }
@@ -207,9 +231,15 @@ form.addEventListener("submit", function (e) {
     let filteredData = [];
     if (isFemale) {
       filteredData = openPowerliftingData.filter(row => row["Sex"] === "F" && parseFloat(row["BodyweightKg"]) <= femaleMaxWeight);
+      if (isWeightClassLimited) {
+        filteredData = filteredData.filter(row => parseFloat(row["BodyweightKg"]) >= femaleMinWeight);
+      }
     }
     else {
       filteredData = openPowerliftingData.filter(row => row["Sex"] === "M" && parseFloat(row["BodyweightKg"]) <= maleMaxWeight);
+      if (isWeightClassLimited){
+        filteredData = filteredData.filter(row => parseFloat(row["BodyweightKg"]) >= maleMinWeight);
+      }
     }
     let oldWilks = calculateOldWilks(bodyWeight, isFemale, total);
     let oldWilks1RM = calculateOldWilks(bodyWeight, isFemale, total1RM);

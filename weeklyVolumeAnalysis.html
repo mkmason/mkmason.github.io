@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Weekly Volume Analysis</title>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <form id="csvForm">
+        <input type="file" id="csvInput" accept=".csv" />
+        <input type="button" value="Submit" onclick="submitClicked()"/>
+      </form>
+      <a href="index.html" class="home-button">Home</a>
+        <div id ="csvNaming">
+            <label for="dateName">Date header name:</label>
+            <input type="text" id="dateName" value="Date" />
+            <label for="weightName">Weight header name:</label>
+            <input type="text" id="weightName" value="Weight" />
+            <label for="repsName">Reps header name:</label>
+            <input type="text" id="repsName" value="Reps" />
+            <label for="exerciseName">Exercise header name:</label>
+            <input type="text" id="exerciseName" value="Exercise" />
+        </div>
+        <style>
+      .home-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 10px 15px;
+        background-color: #007BFF;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 14px;
+      }
+      .home-button:hover {
+        background-color: #0056b3;
+      }
+            </style>
+        <script src="https://cdn.plot.ly/plotly-2.25.2.min.js"></script>
+        <script src="src/weeklyVolumeAnalysis.js"></script>
+    </body>
+</html>
