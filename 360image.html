@@ -39,12 +39,19 @@
     </head>
     <a href="index.html" class="home-button">Home</a>
     <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+    
     <body>
         <div id="image-container">
             <a-scene embedded>
-                <a-entity camera look-controls="reverseMouseDrag: true"></a-entity>
-                <a-sky src="data/imageTest.jpg"></a-sky>
+                <a-sky id="sky" src="data/imageTest.jpg"></a-sky>
+                <a-box id="box1" position="0 -5 -10"></a-box>
+                <a-box id="box2" position="0 -5 10"></a-box>
+                <a-box id="box3" position="10 -5 0"></a-box>
+                <a-box id="box4" position="-10 -5 0"></a-box>
+                <a-camera id="camera" look-controls="reverseMouseDrag: true" cursor="rayOrigin: mouse">
+                </a-camera>
             </a-scene>
         </div>
+        <script src="src/360image.js"></script>
     </body>
 </html>
