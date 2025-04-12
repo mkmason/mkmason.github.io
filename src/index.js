@@ -50,6 +50,7 @@ form.addEventListener("submit", function (e) {
   let islbsLifted = document.querySelector("#lbsLifted").checked;
   let isFemale = document.querySelector("#sex").checked;
   let isWeightClassLimited = document.querySelector("#weightClassCheck").checked;
+  let maxReps = document.querySelector("#maxReps").value;
 
   reader.onload = function (e) {
     const csvArray = csvToArr(e.target.result, /[,;]/);
@@ -93,7 +94,7 @@ form.addEventListener("submit", function (e) {
     }
     const enrichedArray = filteredArray.map(row => {
       const weight = parseFloat(row[weightName]);
-      const reps = parseFloat(row[repsName]);
+      const reps = Math.min(parseFloat(row[repsName]), maxReps);
       if (reps <=10){
         row["1RM Estimate"] = (weight / (1.0278 - 0.0278 * reps)).toFixed(2);
       }
@@ -258,6 +259,8 @@ form.addEventListener("submit", function (e) {
     filteredData.sort((a, b) => parseFloat(a["TotalKg"]) - parseFloat(b["TotalKg"]));
     let placement = filteredData.findIndex(row => parseFloat(row["TotalKg"]) >= total) + 1;
     let placement1RM = filteredData.findIndex(row => parseFloat(row["TotalKg"]) >= total1RM) + 1;
+    let placementPercentile = (placement / filteredData.length) * 100;
+    let placement1RMPercentile = (placement1RM / filteredData.length) * 100;
     const data9 = [{
       x: Array.from({ length: filteredData.length }, (_, i) => filteredData.length - i),
       y: filteredData.map(row => row["TotalKg"]),
@@ -305,7 +308,7 @@ form.addEventListener("submit", function (e) {
     const layout9 = {
       xaxis: {range: [0, filteredData.length + 1], title: "Placement"},
       yaxis: {range: [0, parseFloat(filteredData[filteredData.length - 1]["TotalKg"]) + 100], title: "Total (kg)"},
-      title: "Open Powerlifting Data (05-04-2025, Tested, Raw+Wraps, SBD) " + "Weight Class: " + weightClassValue + "kg",
+      title: "Open Powerlifting Data (05-04-2025, Tested, Raw+Wraps, SBD) " + "Weight Class: " + weightClassValue + "kg" + ' ' + "Percentile: (" + placementPercentile.toFixed(2) + "%)" + ' ' + "Estimate Percentile: (" + placement1RMPercentile.toFixed(2) + "%)",
     };
     Plotly.newPlot("myPlot9", data9, layout9);
     // Define Data
