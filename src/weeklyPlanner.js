@@ -137,7 +137,6 @@ function addSplit() {
         case "Pull":
             addToPlan(day, "Back");
             addToPlan(day, "Bicep");
-            addToPlan(day, "Forearms");
             break;
         case "Upper":
             addToPlan(day, "Back");

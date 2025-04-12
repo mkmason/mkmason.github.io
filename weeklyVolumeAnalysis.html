@@ -9,14 +9,14 @@
         <input type="file" id="csvInput" accept=".csv" />
         <input type="button" value="Submit" onclick="submitClicked()"/>
       </form>
+      <button id="readGrid" onclick="readGrid()">Read Grid</button>
+      <button id="saveGrid" onclick="saveGrid()">Save Grid</button>
+      <button id="loadGrid" onclick="loadGrid()">Load Grid</button>
+      <button id="calculateVolume" onclick="calculateWeeklyVolume()">Calculate Weekly Volume</button>
       <a href="index.html" class="home-button">Home</a>
         <div id ="csvNaming">
             <label for="dateName">Date header name:</label>
             <input type="text" id="dateName" value="Date" />
-            <label for="weightName">Weight header name:</label>
-            <input type="text" id="weightName" value="Weight" />
-            <label for="repsName">Reps header name:</label>
-            <input type="text" id="repsName" value="Reps" />
             <label for="exerciseName">Exercise header name:</label>
             <input type="text" id="exerciseName" value="Exercise" />
         </div>
@@ -38,5 +38,55 @@
             </style>
         <script src="https://cdn.plot.ly/plotly-2.25.2.min.js"></script>
         <script src="src/weeklyVolumeAnalysis.js"></script>
+        <table id="dataGrid" border="1" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+          <thead>
+            <tr>
+              <th>Exercise Name</th>
+              <th>Back</th>
+              <th>Bicep</th>
+              <th>Forearms</th>
+              <th>Chest</th>
+              <th>Tricep</th>
+              <th>Shoulders</th>
+              <th>Quad</th>
+              <th>Glutes</th>
+              <th>Hamstring</th>
+              <th>Calves</th>
+              <th>Core</th>
+              <th>Exercise Name</th>
+            </tr>
+          </thead>
+          <tbody id="dataGridBody">
+          </tbody>
+        </table>
+        <style>
+          #dataGrid tbody tr:nth-child(odd) {
+            background-color: #f2f2f2;
+          }
+          #dataGrid tbody tr:nth-child(even) {
+            background-color: #e6e6e6;
+              }
+              #dataGrid thead th {
+              position: sticky;
+              top: 0;
+              background-color: #007BFF;
+              color: white;
+              z-index: 1;
+              }
+          </style>
+        </style>
+        <div id="plotsContainer" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px;">
+          <div id="plot1"></div>
+          <div id="plot2"></div>
+          <div id="plot3"></div>
+          <div id="plot4"></div>
+          <div id="plot5"></div>
+          <div id="plot6"></div>
+          <div id="plot7"></div>
+          <div id="plot8"></div>
+          <div id="plot9"></div>
+          <div id="plot10"></div>
+          <div id="plot11"></div>
+        </div>
     </body>
 </html>
