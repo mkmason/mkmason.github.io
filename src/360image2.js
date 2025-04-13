@@ -1,69 +1,42 @@
-document.addEventListener("DOMContentLoaded", function() {
-    pannellum.viewer('panorama', {
-        "type": "equirectangular",
-        "panorama": "data/imageTest.jpg",
-        "autoLoad": true,
-    });
+let panorama = pannellum.viewer('panorama', {
+    "type": "equirectangular",
+    "panorama": "data/imageTest1.jpg",
+    "autoLoad": true,
+    "hotSpots": [
+        {
+            "pitch": 14.1,
+            "yaw": 1.5,
+            "type": "scene",
+            "text": "Click!",
+            "clickHandlerFunc": function() {
+                pressed();
+            },
+        },
+    ]
 });
 
-let n=0;
+let n=1;
 function pressed() {
     n++;
-    console.log("Button pressed!");
-    pannellum.viewer('panorama').addScene(jsonData[n]);
-}
-
-let jsonData = [
-    {
-        "type": "equirectangular",
-        "panorama": "data/imageTest.jpg",
-        "autoLoad": true,
-        "hotSpots": [
-            {
-                "pitch": 0,
-                "yaw": 0,
-                "type": "info",
-                "text": "First Image Info",
-            }
-        ]
-    },
-    {
-        "type": "equirectangular",
-        "panorama": "data/imageTest2.jpg",
-        "autoLoad": true,
-        "hotSpots": [
-            {
-                "pitch": 10,
-                "yaw": 20,
-                "type": "info",
-                "text": "Second Image Info",
-            }
-        ]
-    },
-    {
-        "type": "equirectangular",
-        "panorama": "data/imageTest3.jpg",
-        "autoLoad": true,
-        "hotSpots": [
-            {
-                "pitch": -10,
-                "yaw": -20,
-                "type": "info",
-                "text": "Third Image Info",
-            }
-        ]
-    },
-    {
-        "type": "equirectangular",
-        "panorama": "data/imageTest4.jpg",
-        "autoLoad": true,
-        "hotSpots": [
-            {
-                "pitch": 15,
-                "yaw": 30,
-                "type": "info",
-                "text": "Fourth Image Info",
-            }
-        ]
+    if (n==5) {
+        n=1;
     }
-];
+    console.log("Button pressed!");
+    panorama.destroy();
+    panorama = pannellum.viewer('panorama', {
+        "type": "equirectangular",
+        "panorama": "data/imageTest"+n+".jpg",
+        "autoLoad": true,
+        "hotSpots": [
+            {
+                "pitch": 5*n,
+                "yaw": 5*n,
+                "type": "scene",
+                "text": "Click!",
+                "clickHandlerFunc": function() {
+                    pressed();
+                },
+            },
+        ]
+    });
+}
