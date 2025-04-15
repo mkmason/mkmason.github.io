@@ -6,14 +6,9 @@
     <title>A simple example</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
     <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
-    <a href="index.html" class="home-button">Home</a>
-
+    
     <style>
-        #panorama {
-            width: 600px;
-            height: 400px;
-        }
-        .home-button {
+      .home-button {
         position: absolute;
         top: 10px;
         right: 10px;
@@ -23,18 +18,23 @@
         text-decoration: none;
         border-radius: 5px;
         font-size: 14px;
+        z-index: 1000; /* Ensure the button is on top */
       }
       .home-button:hover {
         background-color: #0056b3;
       }
-    </style>
+      </style>
 </head>
 <body>
-
-<div id="panorama"></div>
+  <a href="index.html" class="home-button">Home</a>
+  <div style="display: flex; flex-direction: column; height: 98vh;">
+  <div id="panorama" style="height: 50%;"></div>
+  <div id="map" style="height: 50%; background-color: #f0f0f0; display: flex; justify-content: center; align-items: center;">
+    <img src="data/2dmap.jpg" alt="Map" style="max-width: 100%; max-height: 100%; position: relative;" id="mapImage"/>
+  </div>
+</div>
 
 <!-- External JavaScript file linking -->
 <script src="src/360image2.js"></script>
-<button id="test_button" onclick="pressed()">Test</button>
 </body>
 </html>
