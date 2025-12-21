@@ -51,6 +51,8 @@ form.addEventListener("submit", function (e) {
   let isFemale = document.querySelector("#sex").checked;
   let isWeightClassLimited = document.querySelector("#weightClassCheck").checked;
   let maxReps = document.querySelector("#maxReps").value;
+  let sumoDeadliftChecked = document.querySelector("#SumoDeadlift").checked;
+  let sumoDeadliftName = document.querySelector("#SumoDeadliftName").value;
 
   reader.onload = function (e) {
     const csvArray = csvToArr(e.target.result, /[,;]/);
@@ -78,10 +80,18 @@ form.addEventListener("submit", function (e) {
         alert("Invalid CSV file. Please check the file format.");
         return;
       }
+    if (sumoDeadliftChecked) {
+      csvArrayCleaned.forEach(row => {
+        if (row[exerciseName] === sumoDeadliftName) {
+          row[exerciseName] = deadliftName;
+        }
+      });
+    }
     const filteredArray = csvArrayCleaned.filter(row => 
-      row[exerciseName] === benchName || 
-      row[exerciseName] === squatName || 
-      row[exerciseName] === deadliftName
+      (row[exerciseName] === benchName || 
+       row[exerciseName] === squatName || 
+       row[exerciseName] === deadliftName) &&
+      parseFloat(row[repsName]) !== 0 // Ignore rows where reps is 0
     );
     if (filteredArray.length === 0) {
       alert("No matching exercises found in the CSV file.");
