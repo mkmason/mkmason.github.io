@@ -4,15 +4,22 @@ let dateName = document.querySelector("#dateName").value;
 let exerciseName = document.querySelector("#exerciseName").value;
 let filteredCSVTest = [];
 let weeklyVolumeTest = [];
+const gridHeaders = ['Back', 'Bicep', 'Forearm', 'Chest', 'Tricep', 'Shoulder', 'Quad', 'Glutes', 'Hamstring', 'Calves', 'Core'];
 
 
 function submitClicked(){
     console.log("Submit button clicked");
     readCSV().then((filteredCSV) => {
         const exerciseList = filteredCSV.map((item) => item.exercise);
+        const exerciseCategoryMap = {};
+        filteredCSV.forEach((item) => {
+            if (item.category && !exerciseCategoryMap[item.exercise]) {
+                exerciseCategoryMap[item.exercise] = item.category;
+            }
+        });
         let uniqueExercises = [...new Set(exerciseList)];
         uniqueExercises.sort();
-        populateGrid(uniqueExercises);
+        populateGrid(uniqueExercises, exerciseCategoryMap);
     }).catch((error) => {
         console.error("Error reading CSV:", error);
     });
@@ -39,7 +46,6 @@ function csvToArr(stringVal, splitter) {
 
 function calculateWeeklyVolume() {
     let gridData = readGrid();
-    let gridHeaders = ['Back', 'Bicep', 'Forearm', 'Chest', 'Tricep', 'Shoulder', 'Quad', 'Glutes', 'Hamstring', 'Calves', 'Core'];
     let csvData = filteredCSVTest;
     let weeklyVolume = {};
     let startYear = new Date(csvData[0].date).getFullYear();
@@ -69,16 +75,15 @@ function calculateWeeklyVolume() {
     drawWeeklyPlots();
 }
 
-function populateGrid(uniqueExercises) {
+function populateGrid(uniqueExercises, exerciseCategoryMap = {}) {
     const grid = document.querySelector("#dataGridBody");
     grid.innerHTML = ""; // Clear existing content
     uniqueExercises.forEach((exercise) => {
         const row = document.createElement("tr");
         const exerciseCell = document.createElement("td");
-        const repeatCell = document.createElement("td");
         exerciseCell.textContent = exercise;
         row.appendChild(exerciseCell);
-        for (let i = 2; i <= 12; i++) {
+        gridHeaders.forEach((header) => {
             const inputCell = document.createElement("td");
             const selectField = document.createElement("select");
             const options = ["0", "0.5", "1"];
@@ -91,9 +96,14 @@ function populateGrid(uniqueExercises) {
             selectField.value = "0";
             inputCell.appendChild(selectField);
             row.appendChild(inputCell);
-            repeatCell.textContent = exercise;
-            row.appendChild(repeatCell);
-        }
+            const category = exerciseCategoryMap?.[exercise]?.trim().toLowerCase();
+            if (category && header.toLowerCase() === category) {
+                selectField.value = "1";
+            }
+        });
+        const repeatCell = document.createElement("td");
+        repeatCell.textContent = exercise;
+        row.appendChild(repeatCell);
         grid.appendChild(row);
     });
 }
@@ -172,7 +182,9 @@ function readCSV() {
             const fileContent = event.target.result;
             const csvData = csvToArr(fileContent, ",");
             let filteredCSV = csvData.map((item) => {
-                return {date: item[dateName], exercise: item[exerciseName]};
+                const categoryKey = Object.keys(item).find((key) => key.trim().toLowerCase() === "category");
+                const category = categoryKey ? item[categoryKey] : undefined;
+                return {date: item[dateName], exercise: item[exerciseName], category: category};
             });
             filteredCSVTest = filteredCSV;
             resolve(filteredCSV);

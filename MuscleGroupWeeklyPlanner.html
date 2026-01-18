@@ -1,122 +1,251 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Muscle Group Planner</title>
     <meta charset="UTF-8" />
+    <title>Muscle Group Planner</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&display=swap');
+      :root {
+        --bg: #0d1117;
+        --card: #161b22;
+        --border: #1f242d;
+        --text: #e6edf3;
+        --muted: #9fb1c3;
+        --accent: #4cc9f0;
+        --accent-2: #5e60ce;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: radial-gradient(circle at 20% 20%, rgba(92, 225, 230, 0.08), transparent 35%),
+                    radial-gradient(circle at 80% 10%, rgba(94, 96, 206, 0.12), transparent 30%),
+                    radial-gradient(circle at 50% 80%, rgba(76, 201, 240, 0.08), transparent 35%),
+                    var(--bg);
+        color: var(--text);
+        font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+        min-height: 100vh;
+        padding: 32px;
+      }
+      a.home-button {
+        position: fixed;
+        top: 16px;
+        right: 16px;
+        padding: 10px 14px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        color: var(--text);
+        text-decoration: none;
+        border-radius: 10px;
+        font-weight: 600;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+      }
+      h1 {
+        margin: 0 0 8px;
+        letter-spacing: -0.5px;
+      }
+      p.lead {
+        margin: 0 0 20px;
+        color: var(--muted);
+      }
+      .page {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      .panel {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 16px;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+      }
+      .section-title {
+        font-size: 15px;
+        color: var(--muted);
+        margin: 0 0 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      /* Palette */
+      #musclePalette {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 10px;
+      }
+      .muscle-chip {
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        cursor: grab;
+        font-weight: 600;
+        color: #000000;
+        text-align: center;
+        transition: transform 0.1s ease, box-shadow 0.1s ease;
+      }
+      .muscle-chip:active { cursor: grabbing; }
+      .muscle-chip:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      }
+      /* Controls */
+      .controls-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 12px;
+      }
+      .control-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+      select, button {
+        background: #0f1620;
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 12px;
+        font-weight: 600;
+      }
+      button.primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        border: none;
+        color: #0b0f14;
+      }
+      button.danger { border-color: #ff6b6b; color: #ff6b6b; }
+      button.ghost { background: transparent; }
+      /* Calendar */
+      #calendar {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+      }
+      .day-card {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 12px;
+        background: rgba(255,255,255,0.02);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .day-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+      }
+      .day-dropzone {
+        min-height: 80px;
+        padding: 8px;
+        border: 1px dashed var(--border);
+        border-radius: 10px;
+        background: rgba(255,255,255,0.02);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .day-dropzone.drag-over { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-weight: 700;
+        color: #000000;
+        background: #4cc9f0;
+        cursor: pointer;
+        transition: opacity 0.2s ease;
+      }
+      .tag:hover {
+        opacity: 0.85;
+      }
+      .tag button {
+        background: transparent;
+        border: none;
+        color: inherit;
+        padding: 0;
+        font-weight: 700;
+        cursor: pointer;
+        pointer-events: none;
+      }
+      .day-footer { display: flex; gap: 8px; flex-wrap: wrap; }
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 10px;
+      }
+      .stat-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); }
+      .stat-row:last-child { border-bottom: none; }
+      @media (max-width: 640px) {
+        body { padding: 16px; }
+        #calendar { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+      }
+    </style>
   </head>
-  <a href="index.html" class="home-button">Home</a>
   <body>
-    <h1>Muscle Group Planner</h1>
+    <a href="index.html" class="home-button">Home</a>
+    <div class="page">
+      <div>
+        <h1>Muscle Group Planner</h1>
+        <p class="lead">Drag a muscle group into a day or use the quick-add buttons inside each day.</p>
+      </div>
 
-    <form id="muscleGroupForm">
-      <label for="muscleGroup">Select a muscle group:</label>
-      <select id="muscleGroup" name="muscleGroup">
-          <option value="Back">Back</option>
-          <option value="Bicep">Bicep</option>
-          <option value="Calves">Calves</option>
-          <option value="Chest">Chest</option>
-          <option value="Core">Core</option>
-          <option value="Forearms">Forearms</option>
-          <option value="Glutes">Glutes</option>
-          <option value="Hamstring">Hamstring</option>
-          <option value="Quad">Quad</option>
-          <option value="Shoulder">Shoulders</option>
-          <option value="Tricep">Tricep</option>
-      </select>
+      <div class="panel">
+        <div class="section-title">Muscle groups (drag into a day)</div>
+        <div id="musclePalette"></div>
+      </div>
 
-      <label for="day">Select a day:</label>
-      <select id="day" name="day">
-        <option value="Monday">Monday</option>
-        <option value="Tuesday">Tuesday</option>
-        <option value="Wednesday">Wednesday</option>
-        <option value="Thursday">Thursday</option>
-        <option value="Friday">Friday</option>
-        <option value="Saturday">Saturday</option>
-        <option value="Sunday">Sunday</option>
-      </select>
-
-      <button type="button" onclick="addExercise()">Add Group</button>
-      <button type="button" onclick="removeExercise()">Remove Group</button>
-      <button type="button" onclick="clearPlan()">Clear Plan</button>
-        <button type="button" onclick="savePlan()">Save Plan</button>
-        <button type="button" onclick="loadPlan()">Load Plan</button>
-    </form>
-    <form id="muscleSplitForm">
-        <label for="muscleSplit">Select a muscle split:</label>
-        <select id="muscleSplit" name="muscleSplit">
-          <option value="Push">Push</option>
-          <option value="Pull">Pull</option>
-          <option value="Upper">Upper</option>
-          <option value="Lower">Lower</option>
-          <option value="Arms">Arms</option>
-          <option value="Full Body">Full Body</option>
-        </select>
-        <button type="button" onclick="addSplit()">Add Split</button>
-        <button type="button" onclick="removeSplit()">Remove Split</button>
-      </form>
-
-    <h2>Your Workout Plan</h2>
-        <div id="calendar">
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>Monday</th>
-                        <th>Tuesday</th>
-                        <th>Wednesday</th>
-                        <th>Thursday</th>
-                        <th>Friday</th>
-                        <th>Saturday</th>
-                        <th>Sunday</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td id="Monday"></td>
-                        <td id="Tuesday"></td>
-                        <td id="Wednesday"></td>
-                        <td id="Thursday"></td>
-                        <td id="Friday"></td>
-                        <td id="Saturday"></td>
-                        <td id="Sunday"></td>
-                    </tr>
-                </tbody>
-            </table>
+      <div class="panel">
+        <div class="section-title">Quick controls</div>
+        <div class="controls-grid">
+          <div class="control-row">
+            <span>Split:</span>
+            <select id="splitSelect">
+              <option value="Push">Push</option>
+              <option value="Pull">Pull</option>
+              <option value="Upper">Upper</option>
+              <option value="Lower">Lower</option>
+              <option value="Arms">Arms</option>
+              <option value="Full Body">Full Body</option>
+            </select>
+            <select id="splitDaySelect"></select>
+            <button id="applySplit" class="primary" type="button">Add split</button>
+            <button id="removeSplit" class="ghost" type="button">Remove split</button>
+          </div>
+          <div class="control-row">
+            <button id="savePlan" class="primary" type="button">Save plan</button>
+            <button id="loadPlan" type="button">Load plan</button>
+            <button id="clearPlan" class="danger" type="button">Clear week</button>
+          </div>
         </div>
+      </div>
 
-        <h2>Statistics</h2>
-        <div id="statistics">
-            <p><b>Total Enteries: </b><span id="totalExercises">0</span></p>
-            <p><b>Muscle Groups Targeted: </b><span id="muscleGroupsTargeted">0</span>/11</p>
-            <p><b>Workout Days: </b><span id="daysPlanned">0</span>/7</p>
-            <p><b>Chest Days: </b><span id="chestDays">0</span><b> Minimum Days Between: </b><span id="chestRestDays">7</span></p>
-            <p><b>Back Days:</b> <span id="backDays">0</span> <b>Minimum Days Between:</b> <span id="backRestDays">7</span></p>
-            <p><b>Quad Days:</b> <span id="quadDays">0</span> <b>Minimum Days Between:</b> <span id="quadRestDays">7</span></p>
-            <p><b>Hamstring Days:</b> <span id="hamstringDays">0</span> <b>Minimum Days Between:</b> <span id="hamstringRestDays">7</span></p>
-            <p><b>Bicep Days:</b> <span id="bicepDays">0</span> <b>Minimum Days Between:</b> <span id="bicepRestDays">7</span></p>
-            <p><b>Tricep Days:</b> <span id="tricepDays">0</span> <b>Minimum Days Between:</b> <span id="tricepRestDays">7</span></p>
-            <p><b>Core Days:</b> <span id="coreDays">0</span> <b>Minimum Days Between:</b> <span id="coreRestDays">7</span></p>
-            <p><b>Calves Days:</b> <span id="calvesDays">0</span> <b>Minimum Days Between:</b> <span id="calvesRestDays">7</span></p>
-            <p><b>Forearms Days:</b> <span id="forearmsDays">0</span> <b>Minimum Days Between:</b> <span id="forearmsRestDays">7</span></p>
-            <p><b>Shoulder Days:</b> <span id="shoulderDays">0</span> <b>Minimum Days Between:</b> <span id="shoulderRestDays">7</span></p>
-            <p><b>Glutes Days:</b> <span id="glutesDays">0</span> <b>Minimum Days Between:</b> <span id="glutesRestDays">7</span></p>
-            <p><b>Rest Days:</b> <span id="restDays">7</span>/7</p>
+      <div class="panel">
+        <div class="section-title">Weekly calendar</div>
+        <div id="calendar"></div>
+      </div>
+
+      <div class="panel">
+        <div class="section-title">Statistics</div>
+        <div id="statistics" class="stats-grid">
+          <div class="stat-row"><span>Total entries</span><span id="totalExercises">0</span></div>
+          <div class="stat-row"><span>Muscle groups targeted</span><span><span id="muscleGroupsTargeted">0</span>/11</span></div>
+          <div class="stat-row"><span>Workout days</span><span><span id="daysPlanned">0</span>/7</span></div>
+          <div class="stat-row"><span>Chest (days / min rest)</span><span><span id="chestDays">0</span> / <span id="chestRestDays">7</span></span></div>
+          <div class="stat-row"><span>Back (days / min rest)</span><span><span id="backDays">0</span> / <span id="backRestDays">7</span></span></div>
+          <div class="stat-row"><span>Quad (days / min rest)</span><span><span id="quadDays">0</span> / <span id="quadRestDays">7</span></span></div>
+          <div class="stat-row"><span>Hamstring (days / min rest)</span><span><span id="hamstringDays">0</span> / <span id="hamstringRestDays">7</span></span></div>
+          <div class="stat-row"><span>Shoulder (days / min rest)</span><span><span id="shoulderDays">0</span> / <span id="shoulderRestDays">7</span></span></div>
+          <div class="stat-row"><span>Bicep (days / min rest)</span><span><span id="bicepDays">0</span> / <span id="bicepRestDays">7</span></span></div>
+          <div class="stat-row"><span>Tricep (days / min rest)</span><span><span id="tricepDays">0</span> / <span id="tricepRestDays">7</span></span></div>
+          <div class="stat-row"><span>Calves (days / min rest)</span><span><span id="calvesDays">0</span> / <span id="calvesRestDays">7</span></span></div>
+          <div class="stat-row"><span>Core (days / min rest)</span><span><span id="coreDays">0</span> / <span id="coreRestDays">7</span></span></div>
+          <div class="stat-row"><span>Glutes (days / min rest)</span><span><span id="glutesDays">0</span> / <span id="glutesRestDays">7</span></span></div>
+          <div class="stat-row"><span>Forearms (days / min rest)</span><span><span id="forearmsDays">0</span> / <span id="forearmsRestDays">7</span></span></div>
+          <div class="stat-row"><span>Rest days</span><span><span id="restDays">7</span>/7</span></div>
         </div>
+      </div>
+    </div>
 
     <script src="src/weeklyPlanner.js"></script>
-    <style>
-        .home-button {
-          position: absolute;
-          top: 10px;
-          right: 10px;
-          padding: 10px 15px;
-          background-color: #007BFF;
-          color: white;
-          text-decoration: none;
-          border-radius: 5px;
-          font-size: 14px;
-        }
-        .home-button:hover {
-          background-color: #0056b3;
-        }
-      </style>
   </body>
+</html>
