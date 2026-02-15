@@ -3,6 +3,7 @@
   <head>
     <title>Arm & Weight Tracker</title>
     <meta charset="UTF-8" />
+    <link rel="stylesheet" href="navbar.css" />
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -55,21 +56,6 @@
         background-color: #0056b3;
       }
       
-      .home-button {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        padding: 10px 15px;
-        background-color: #007BFF;
-        color: white;
-        text-decoration: none;
-        border-radius: 5px;
-        font-size: 14px;
-      }
-      
-      .home-button:hover {
-        background-color: #0056b3;
-      }
       
       .plots-container {
         display: grid;
@@ -106,7 +92,18 @@
     </style>
   </head>
   <body>
-    <a href="index.html" class="home-button">Home</a>
+    <div class="navbar">
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="PowerliftingTotals.html">Powerlifting Totals</a>
+        <a href="MuscleGroupWeeklyPlanner.html">Muscle Group Planner</a>
+        <a href="weeklyVolumeAnalysis.html">Weekly Volume</a>
+        <a href="ArmWeightTracker.html" class="active">Arm & Weight Tracker</a>
+        <a href="360image.html">360 Image</a>
+        <a href="360image2.html">360 Image 2</a>
+        <a href="6WeekBenchProgram.html">6 Week Bench</a>
+      </nav>
+    </div>
     
     <div class="container">
       <h1>Body Measurement Tracker</h1>

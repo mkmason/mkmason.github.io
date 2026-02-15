@@ -1,0 +1,32 @@
+.navbar {
+  background-color: #007BFF;
+  padding: 0;
+  position: sticky;
+  top: 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 100;
+}
+
+.navbar nav {
+  display: flex;
+  max-width: 100%;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+  padding: 15px 20px;
+  display: block;
+  transition: background-color 0.3s;
+}
+
+.navbar a:hover {
+  background-color: #0056b3;
+}
+
+.navbar a.active {
+  background-color: #0056b3;
+  font-weight: bold;
+}

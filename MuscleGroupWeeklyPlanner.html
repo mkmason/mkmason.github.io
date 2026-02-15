@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <title>Muscle Group Planner</title>
+    <link rel="stylesheet" href="navbar.css" />
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&display=swap');
       :root {
@@ -26,18 +27,7 @@
         min-height: 100vh;
         padding: 32px;
       }
-      a.home-button {
-        position: fixed;
-        top: 16px;
-        right: 16px;
-        padding: 10px 14px;
-        background: linear-gradient(135deg, var(--accent), var(--accent-2));
-        color: var(--text);
-        text-decoration: none;
-        border-radius: 10px;
-        font-weight: 600;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-      }
+
       h1 {
         margin: 0 0 8px;
         letter-spacing: -0.5px;
@@ -182,7 +172,18 @@
     </style>
   </head>
   <body>
-    <a href="index.html" class="home-button">Home</a>
+    <div class="navbar">
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="PowerliftingTotals.html">Powerlifting Totals</a>
+        <a href="MuscleGroupWeeklyPlanner.html" class="active">Muscle Group Planner</a>
+        <a href="weeklyVolumeAnalysis.html">Weekly Volume</a>
+        <a href="ArmWeightTracker.html">Arm & Weight Tracker</a>
+        <a href="360image.html">360 Image</a>
+        <a href="360image2.html">360 Image 2</a>
+        <a href="6WeekBenchProgram.html">6 Week Bench</a>
+      </nav>
+    </div>
     <div class="page">
       <div>
         <h1>Muscle Group Planner</h1>
