@@ -119,9 +119,23 @@
         
         <label for="forearmGoal">Forearm Goal (cm):</label>
         <input type="number" id="forearmGoal" value="33" min="0" step="0.1" style="width: 80px;" />
+
+        <label for="upperWeeklyIncrease">Upper Weekly Increase (cm):</label>
+        <input type="number" id="upperWeeklyIncrease" value="0.05" min="0" step="0.01" style="width: 80px;" />
+
+        <label for="forearmWeeklyIncrease">Forearm Weekly Increase (cm):</label>
+        <input type="number" id="forearmWeeklyIncrease" value="0.025" min="0" step="0.01" style="width: 80px;" />
+
+        <label for="trendWeeks">Trend Extension (weeks):</label>
+        <input type="number" id="trendWeeks" value="12" min="1" step="1" style="width: 80px;" />
+
+        <label for="showFutureTrend">Future Trend:</label>
+        <input type="checkbox" id="showFutureTrend" />
         
         <input type="button" value="Generate Plots" onclick="generatePlots()"/>
       </div>
+
+      <div class="input-section" id="projectionStatus" style="display: none;"></div>
       
       <div class="plots-container" id="plotsContainer"></div>
     </div>
