@@ -276,6 +276,25 @@ select:focus {
   box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
+input[type="file"]::file-selector-button {
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  margin-right: 10px;
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface-alt);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+input[type="file"]::file-selector-button:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
 input[type="checkbox"] {
   width: 18px;
   height: 18px;

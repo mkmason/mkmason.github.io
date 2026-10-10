@@ -475,20 +475,20 @@ function drawProgressPlots(progress) {
   });
 }
 
-function drawRankingPlot(ranking, progress) {
-  const totals = ranking.totals;
-  const count = totals.length;
+// Highest-first curve of the pool, with dashed markers at each of your results
+function drawPlacementPlot(id, pool, title, axisTitle, yours) {
+  const count = pool.length;
   // A few thousand points draw the same curve as the full list
   const step = Math.max(1, Math.ceil(count / 4000));
   const x = [];
   const y = [];
   for (let i = 0; i < count; i += step) {
     x.push(i + 1);
-    y.push(totals[i]);
+    y.push(pool[i]);
   }
   if (count && x[x.length - 1] !== count) {
     x.push(count);
-    y.push(totals[count - 1]);
+    y.push(pool[count - 1]);
   }
 
   const data = [{
@@ -500,15 +500,12 @@ function drawRankingPlot(ranking, progress) {
     hovertemplate: "#%{x}: %{y:.1f} kg<extra></extra>",
   }];
 
-  if (progress && count) {
-    [
-      [progress.best.total, "Your total", COLORS.record],
-      [progress.bestEstimate.total, "Your 1RM estimate total", COLORS.estimate],
-    ].forEach(([total, name, color]) => {
-      const place = placement(totals, total);
+  if (count) {
+    yours.filter(([value]) => value > 0).forEach(([value, name, color]) => {
+      const place = placement(pool, value);
       data.push({
         x: [place, place],
-        y: [0, total],
+        y: [0, value],
         name,
         mode: "lines+markers",
         line: { color, dash: "dash" },
@@ -519,19 +516,35 @@ function drawRankingPlot(ranking, progress) {
   }
 
   const layout = {
-    title: "Where your total places",
-    height: 460,
+    title,
+    height: id === "myPlot9" ? 460 : 380,
     margin: { l: 60, r: 20, t: 50, b: 50 },
     xaxis: { title: "Placement", range: [0, count + 1] },
-    yaxis: { title: "Total (kg)", range: [0, (count ? totals[0] : 0) + 50] },
-    legend: { orientation: "h", y: -0.2 },
+    yaxis: { title: axisTitle, range: [0, (count ? pool[0] : 0) * 1.05 + 10] },
+    legend: { orientation: "h", y: -0.25 },
   };
-  Plotly.newPlot("myPlot9", data, SiteTheme.plotLayout(layout), { responsive: true });
+  Plotly.newPlot(id, data, SiteTheme.plotLayout(layout), { responsive: true });
+}
 
-  const meta = opl.meta;
+function drawRankingPlots(ranking, progress) {
+  const yours = (key, label) => (progress ? [
+    [progress.best[key], `Your ${label}`, COLORS.record],
+    [progress.bestEstimate[key], `Your 1RM estimate ${label}`, COLORS.estimate],
+  ] : []);
+
+  drawPlacementPlot("myPlot9", ranking.pools.total, "Where your total places", "Total (kg)", yours("total", "total"));
+  [
+    ["placeSquat", "squat", "Squat"],
+    ["placeBench", "bench", "Bench Press"],
+    ["placeDeadlift", "deadlift", "Deadlift"],
+  ].forEach(([id, key, label]) => {
+    drawPlacementPlot(id, ranking.pools[key], `Where your ${label.toLowerCase()} places`, `${label} (kg)`,
+      yours(key, label.toLowerCase()));
+  });
+
   el("oplInfo").textContent =
-    `Comparing with ${count.toLocaleString()} raw, drug tested, full power lifters (${ranking.description}). ` +
-    `Each lifter counts once, with their best total. OpenPowerlifting data up to ${meta.latestMeet}.`;
+    `Comparing with ${ranking.totals.length.toLocaleString()} raw, drug tested, full power lifters (${ranking.description}). ` +
+    `Each lifter counts once, with their best results. OpenPowerlifting data up to ${opl.meta.latestMeet}.`;
 }
 
 function run() {
@@ -548,7 +561,7 @@ function run() {
   const ranking = opl ? rankingPool(settings) : null;
   renderResults(settings, progress, ranking);
   drawProgressPlots(progress);
-  if (ranking) drawRankingPlot(ranking, progress);
+  if (ranking) drawRankingPlots(ranking, progress);
 }
 
 // ---------- Manual lifts ----------
