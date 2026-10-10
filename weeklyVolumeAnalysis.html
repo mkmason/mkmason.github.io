@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Weekly Volume Analysis</title>
     <link rel="stylesheet" href="theme.css" />
+    <script src="src/theme.js"></script>
   </head>
   <body>
     <div class="navbar">
@@ -37,6 +38,7 @@
           <input type="file" id="csvInput" accept=".csv" />
           <input type="button" class="primary" value="Submit" onclick="submitClicked()" />
         </form>
+        <div id="savedFile" class="saved-file" hidden></div>
       </div>
 
       <div class="card">
@@ -102,6 +104,7 @@
     </div>
 
     <script src="src/navbar.js"></script>
+    <script src="src/storage.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.25.2.min.js"></script>
     <script src="src/weeklyVolumeAnalysis.js"></script>
   </body>
