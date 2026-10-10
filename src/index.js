@@ -13,6 +13,7 @@ const LIFTS = [
   { key: "bench", label: "Bench Press" },
   { key: "deadlift", label: "Deadlift" },
 ];
+const METRICS = ["total", "squat", "bench", "deadlift"];
 const LIFT_LABELS = { squat: "Squat", bench: "Bench Press", deadlift: "Deadlift", sumo: "Sumo Deadlift" };
 const COLORS = { record: "#e4572e", estimate: "#3d8bfd", pool: "#8a96a3" };
 
@@ -199,6 +200,13 @@ function Calculate_DOTS(bodyWeight, isFemale, weightLifted) {
   return (500 / denominator) * weightLifted;
 }
 
+// IPF GL points, using the classic (raw) powerlifting coefficients
+function Calculate_GLPoints(bodyWeight, isFemale, weightLifted) {
+  const [a, b, c] = isFemale ? [610.32796, 1045.59282, 0.03048] : [1199.72839, 1025.18162, 0.00921];
+  if (bodyWeight < 35) return 0;
+  return (weightLifted * 100) / (a - b * Math.exp(-c * bodyWeight));
+}
+
 // ---------- OpenPowerlifting rankings ----------
 
 // data/opl is built from the OpenPowerlifting bulk export by scripts/build_opl_data.py
@@ -219,23 +227,34 @@ async function loadOpenPowerlifting() {
     size: 0,
     female: new Uint8Array(size),
     bodyweight: new Float32Array(size),
-    total: new Float32Array(size),
     country: new Uint16Array(size),
     lifter: new Int32Array(size),
-    best: new Float32Array(meta.lifters),
+    values: {}, // per metric: the result of each row
+    best: {}, // per metric: scratch space with one slot per lifter
   };
+  METRICS.forEach((metric) => {
+    data.values[metric] = new Float32Array(size);
+    data.best[metric] = new Float32Array(meta.lifters);
+  });
+  // Columns: sex,bodyweight,total,squat,bench,deadlift,country,lifter (blank total = sum of lifts)
   let position = text.indexOf("\n") + 1;
   let i = 0;
   while (position < text.length && i < size) {
     let end = text.indexOf("\n", position);
     if (end === -1) end = text.length;
     const parts = text.slice(position, end).split(",");
-    if (parts.length === 5) {
+    if (parts.length === 8) {
+      const squat = +parts[3];
+      const bench = +parts[4];
+      const deadlift = +parts[5];
       data.female[i] = parts[0] === "F" ? 1 : 0;
       data.bodyweight[i] = +parts[1];
-      data.total[i] = +parts[2];
-      data.country[i] = +parts[3];
-      data.lifter[i] = +parts[4];
+      data.values.total[i] = parts[2] === "" ? squat + bench + deadlift : +parts[2];
+      data.values.squat[i] = squat;
+      data.values.bench[i] = bench;
+      data.values.deadlift[i] = deadlift;
+      data.country[i] = +parts[6];
+      data.lifter[i] = +parts[7];
       i++;
     }
     position = end + 1;
@@ -255,14 +274,14 @@ function weightClassRange(settings) {
   return { min, max: classes[index], label: `${classes[index]} kg class` };
 }
 
-// Best total per lifter within the chosen filters, highest first
+// Best total, squat, bench and deadlift per lifter within the chosen filters, each highest first
 function rankingPool(settings) {
   const range = settings.weightClassOnly
     ? weightClassRange(settings)
     : { min: 0, max: settings.bodyWeight, label: `at or below ${formatNumber(settings.bodyWeight)} kg` };
   const countryIndex = settings.country ? opl.meta.countries.indexOf(settings.country) + 1 : 0;
   const wantFemale = settings.compareSex === "F" ? 1 : 0;
-  const best = opl.best;
+  const seen = new Uint8Array(opl.meta.lifters);
   const touched = [];
 
   for (let i = 0; i < opl.size; i++) {
@@ -271,26 +290,36 @@ function rankingPool(settings) {
     const bodyweight = opl.bodyweight[i];
     if (bodyweight <= range.min || bodyweight > range.max) continue;
     const lifter = opl.lifter[i];
-    const total = opl.total[i];
-    if (best[lifter] === 0) touched.push(lifter);
-    if (total > best[lifter]) best[lifter] = total;
+    if (!seen[lifter]) {
+      seen[lifter] = 1;
+      touched.push(lifter);
+    }
+    METRICS.forEach((metric) => {
+      const value = opl.values[metric][i];
+      if (value > opl.best[metric][lifter]) opl.best[metric][lifter] = value;
+    });
   }
 
-  const totals = new Float64Array(touched.length);
-  touched.forEach((lifter, i) => {
-    totals[i] = best[lifter];
-    best[lifter] = 0; // reset the shared buffer for the next query
+  const pools = {};
+  METRICS.forEach((metric) => {
+    const best = opl.best[metric];
+    const values = [];
+    touched.forEach((lifter) => {
+      if (best[lifter] > 0) values.push(best[lifter]); // some federations only report totals
+      best[lifter] = 0; // reset the shared buffer for the next query
+    });
+    pools[metric] = Float64Array.from(values).sort().reverse();
   });
-  totals.sort().reverse();
 
   const sexLabel = { B: "male and female", M: "male", F: "female" }[settings.compareSex];
   return {
-    totals,
+    pools,
+    totals: pools.total,
     description: `${sexLabel}, ${settings.country || "world"}, ${range.label}`,
   };
 }
 
-// 1 + number of lifters with a higher best total
+// 1 + number of lifters with a higher result (values sorted highest first)
 function placement(totals, total) {
   let low = 0;
   let high = totals.length;
@@ -341,6 +370,7 @@ function renderResults(settings, progress, ranking, error) {
   const kg = (value) => formatNumber(value) + " kg";
   const scores = (total) => [
     ["DOTS", formatNumber(Calculate_DOTS(settings.bodyWeight, settings.isFemale, total), 2)],
+    ["GL points", formatNumber(Calculate_GLPoints(settings.bodyWeight, settings.isFemale, total), 2)],
     ["New Wilks", formatNumber(Calculate_NewWilks(settings.bodyWeight, settings.isFemale, total), 2)],
     ["Old Wilks", formatNumber(calculateOldWilks(settings.bodyWeight, settings.isFemale, total), 2)],
   ];
@@ -358,16 +388,21 @@ function renderResults(settings, progress, ranking, error) {
   ];
 
   if (ranking && ranking.totals.length) {
-    const count = ranking.totals.length;
-    const place = placement(ranking.totals, progress.best.total);
-    const estimatePlace = placement(ranking.totals, progress.bestEstimate.total);
+    // "#123 (top 4.5%)" for a result within one of the ranking pools
+    const rank = (metric, value) => {
+      const pool = ranking.pools[metric];
+      if (!(value > 0) || !pool.length) return "–";
+      const place = placement(pool, value);
+      return `#${place.toLocaleString()} (top ${formatNumber((place / pool.length) * 100, 2)}%)`;
+    };
     groups.push({
       title: "Ranking",
+      wide: true,
       stats: [
-        ["Placement", `#${place.toLocaleString()} of ${count.toLocaleString()}`, true],
-        ["Top", formatNumber((place / count) * 100, 2) + "%"],
-        ["Estimated placement", `#${estimatePlace.toLocaleString()} of ${count.toLocaleString()}`],
-        ["Estimated top", formatNumber((estimatePlace / count) * 100, 2) + "%"],
+        ["Total", rank("total", progress.best.total), true],
+        ["Total (estimated)", rank("total", progress.bestEstimate.total)],
+        ...LIFTS.map((lift) => [lift.label, rank(lift.key, progress.best[lift.key])]),
+        ["Lifters compared", ranking.totals.length.toLocaleString()],
       ],
     });
   }
@@ -376,7 +411,7 @@ function renderResults(settings, progress, ranking, error) {
   wrapper.className = "stat-groups";
   groups.forEach((group) => {
     const section = document.createElement("div");
-    section.className = "stat-group";
+    section.className = group.wide ? "stat-group wide" : "stat-group";
     const heading = document.createElement("h3");
     heading.textContent = group.title;
     const list = document.createElement("dl");

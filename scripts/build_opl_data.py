@@ -9,12 +9,12 @@ that export to what the placement chart needs:
   * Disqualified / no-show entries and entries without a total are dropped
   * Each lifter is mapped to an integer id so the page can count a lifter once
   * Per lifter, sex, country and IPF weight class only the results that could
-    ever be that lifter's best for a "bodyweight <= X" query are kept (a result
-    is dropped when the same lifter has a lighter-or-equal result with a
-    higher-or-equal total in the same class)
+    ever be that lifter's best squat, bench, deadlift or total for a
+    "bodyweight <= X" query are kept (taken lightest first, a result is kept
+    only if it beats all the lighter results on at least one of them)
 
-Output: data/opl/entries.csv (sex,bodyweight,total,country,lifter) and
-data/opl/meta.json.
+Output: data/opl/entries.csv (sex,bodyweight,total,squat,bench,deadlift,country,lifter;
+total is blank when it equals squat + bench + deadlift) and data/opl/meta.json.
 
 Usage:
   python3 scripts/build_opl_data.py                      # download latest export
@@ -96,10 +96,13 @@ def main():
             continue
         if total <= 0 or bodyweight <= 0:
             continue
+        # A few federations only report totals; those lifts are stored as 0
+        lifts = tuple(max(0.0, float(row[column] or 0))
+                      for column in ("Best3SquatKg", "Best3BenchKg", "Best3DeadliftKg"))
 
         lifter = lifter_ids.setdefault(row["Name"], len(lifter_ids))
         key = (lifter, row["Sex"], row["Country"], weight_class_index(row["Sex"], bodyweight))
-        groups.setdefault(key, []).append((bodyweight, total))
+        groups.setdefault(key, []).append((bodyweight, total) + lifts)
         latest_meet = max(latest_meet, row["Date"])
         kept += 1
 
@@ -108,19 +111,22 @@ def main():
 
     rows = []
     for (lifter, sex, country, _), results in groups.items():
-        best = -1.0
+        best = [-1.0] * 4
         # Lightest first; on equal bodyweight, highest total first
-        for bodyweight, total in sorted(results, key=lambda r: (r[0], -r[1])):
-            if total > best:
-                rows.append((sex, bodyweight, total, country_index.get(country, 0), lifter))
-                best = total
+        for result in sorted(results, key=lambda r: (r[0], -r[1])):
+            values = result[1:]
+            if any(value > top for value, top in zip(values, best)):
+                rows.append((sex, result[0], *values, country_index.get(country, 0), lifter))
+                best = [max(value, top) for value, top in zip(values, best)]
     rows.sort(key=lambda r: (r[0], r[1], r[2]))
 
     os.makedirs(OUT_DIR, exist_ok=True)
     with open(os.path.join(OUT_DIR, "entries.csv"), "w", newline="") as out:
-        out.write("sex,bodyweight,total,country,lifter\n")
-        for sex, bodyweight, total, country, lifter in rows:
-            out.write(f"{sex},{bodyweight:g},{total:g},{country},{lifter}\n")
+        out.write("sex,bodyweight,total,squat,bench,deadlift,country,lifter\n")
+        for sex, bodyweight, total, squat, bench, deadlift, country, lifter in rows:
+            # The total is left blank when it is just the sum of the lifts
+            total_text = "" if abs(squat + bench + deadlift - total) < 0.005 else f"{total:g}"
+            out.write(f"{sex},{bodyweight:g},{total_text},{squat:g},{bench:g},{deadlift:g},{country},{lifter}\n")
 
     meta = {
         "source": "OpenPowerlifting (https://www.openpowerlifting.org)",

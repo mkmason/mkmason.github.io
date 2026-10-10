@@ -407,6 +407,10 @@ button.small {
   gap: 16px;
 }
 
+.stat-group.wide {
+  grid-column: span 2;
+}
+
 .stat-group h3 {
   margin: 0 0 8px;
   font-size: 14px;
@@ -557,5 +561,9 @@ table.data-table tbody tr:nth-child(even) {
   .plot-grid,
   .plot-grid.pairs {
     grid-template-columns: 1fr;
+  }
+
+  .stat-group.wide {
+    grid-column: auto;
   }
 }
