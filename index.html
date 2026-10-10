@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>Home</title>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="navbar.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <link rel="stylesheet" href="theme.css" />
   </head>
   <body>
     <div class="navbar">
@@ -13,10 +14,47 @@
         <a href="MuscleGroupWeeklyPlanner.html">Muscle Group Planner</a>
         <a href="weeklyVolumeAnalysis.html">Weekly Volume</a>
         <a href="ArmWeightTracker.html">Arm & Weight Tracker</a>
-        <a href="360image.html">360 Image</a>
-        <a href="360image2.html">360 Image 2</a>
         <a href="6WeekBenchProgram.html">6 Week Bench</a>
+        <div class="dropdown">
+          <button type="button" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Legacy</button>
+          <div class="dropdown-menu">
+            <a href="360image.html">360 Image</a>
+            <a href="360image2.html">360 Image 2</a>
+          </div>
+        </div>
       </nav>
     </div>
+
+    <div class="page">
+      <div class="page-header">
+        <h1>Training Tools</h1>
+        <p>Pick a tool to get started.</p>
+      </div>
+
+      <div class="tile-grid">
+        <a class="card tile" href="PowerliftingTotals.html">
+          <h2>Powerlifting Totals</h2>
+          <p>Track your total and scores from a FitNotes CSV export.</p>
+        </a>
+        <a class="card tile" href="MuscleGroupWeeklyPlanner.html">
+          <h2>Muscle Group Planner</h2>
+          <p>Plan which muscle groups to train on each day of the week.</p>
+        </a>
+        <a class="card tile" href="weeklyVolumeAnalysis.html">
+          <h2>Weekly Volume</h2>
+          <p>Map exercises to muscle groups and chart weekly volume.</p>
+        </a>
+        <a class="card tile" href="ArmWeightTracker.html">
+          <h2>Arm & Weight Tracker</h2>
+          <p>Plot arm measurements against bodyweight over time.</p>
+        </a>
+        <a class="card tile" href="6WeekBenchProgram.html">
+          <h2>6 Week Bench</h2>
+          <p>Generate a 6 week bench program from your 1 rep max.</p>
+        </a>
+      </div>
+    </div>
+
+    <script src="src/navbar.js"></script>
   </body>
 </html>

@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>Powerlifting Total Progression</title>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="navbar.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Powerlifting Total Progression</title>
+    <link rel="stylesheet" href="theme.css" />
   </head>
   <body>
     <div class="navbar">
@@ -13,87 +14,112 @@
         <a href="MuscleGroupWeeklyPlanner.html">Muscle Group Planner</a>
         <a href="weeklyVolumeAnalysis.html">Weekly Volume</a>
         <a href="ArmWeightTracker.html">Arm & Weight Tracker</a>
-        <a href="360image.html">360 Image</a>
-        <a href="360image2.html">360 Image 2</a>
         <a href="6WeekBenchProgram.html">6 Week Bench</a>
+        <div class="dropdown">
+          <button type="button" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Legacy</button>
+          <div class="dropdown-menu">
+            <a href="360image.html">360 Image</a>
+            <a href="360image2.html">360 Image 2</a>
+          </div>
+        </div>
       </nav>
     </div>
-    <form id="csvForm">
-        <input type="file" id="csvInput" accept=".csv" />
-        <input type="submit" value="Submit" />
-      </form>
-      <div id ="csvNaming">
-        <label for="csvName">Bench name:</label>
-        <input type="text" id="benchName" value="Bench Press" />
-        <label for="csvName">Squat name:</label>
-        <input type="text" id="squatName" value="Squat" />
-        <label for="csvName">Deadlift name:</label>
-        <input type="text" id="deadliftName" value="Deadlift" />
-        <label for="csvName">Date header name:</label>
-        <input type="text" id="dateName" value="Date" />
-        <label for="csvName">Weight header name:</label>
-        <input type="text" id="weightName" value="Weight" />
-        <label for="csvName">Reps header name:</label>
-        <input type="text" id="repsName" value="Reps" />
-        <label for="csvName">Exercise header name:</label>
-        <input type="text" id="exerciseName" value="Exercise" />
-      </div>
-      <div>
-        <label for="bodyWeight">Body Weight:</label>
-        <input type="text" id="bodyWeight" value="80" />
-        <label for="bodyWeight">Body Weight lbs:</label>
-        <input type="checkbox" id="lbs"/>
-        <label for="bodyWeight">Lift lbs:</label>
-        <input type="checkbox" id="lbsLifted"/>
-        <label>Female:</label>
-        <input type="checkbox" id="sex"/>
-        <label for="weightClass">Limit results to weight class:</label>
-        <input type="checkbox" id="weightClassCheck"/>
-        <label for="maxReps">Max Reps for 1RM Estimate:</label>
-        <input type="text" id="maxReps" value="30" />
-        <label for="SumoDeadlift">Merge Sumo Deadlift:</label>
-        <input type="checkbox" id="SumoDeadlift" />
-        <label for="SumoDeadliftName">Sumo Deadlift Name:</label>
-        <input type="text" id="SumoDeadliftName" value="Sumo Deadlift" />
-      </div>
-    <style>
-      .plot-container {
-        display: flex;
-        flex-wrap: wrap;
-        margin-top: 50px;
-        gap: 10px;
-      }
-      .plot-container > div {
-        flex: 1 1 calc(50% - 10px); /* Two plots per row */
-        max-width: calc(50% - 10px);
-      }
-      .home-button {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        padding: 10px 15px;
-        background-color: #007BFF;
-        color: white;
-        text-decoration: none;
-        border-radius: 5px;
-        font-size: 14px;
-      }
-      .home-button:hover {
-        background-color: #0056b3;
-      }
-    </style>
-    <a href="index.html" class="home-button">Home</a>
-    <script src="src/index.js" type="module"></script>
-    <div>
+
+    <div class="page">
+      <div class="page-header">
         <h1>Powerlifting Total Progression</h1>
-        <p>Upload your CSV file to see the powerlifting total progression.</p>
-        <p>Made to work with FitNotes csv naming by default</p>
+        <p>Upload your CSV file to see the powerlifting total progression. Made to work with FitNotes CSV naming by default.</p>
+      </div>
+
+      <div class="card">
+        <div class="section-title">CSV file</div>
+        <form id="csvForm" class="actions">
+          <input type="file" id="csvInput" accept=".csv" />
+          <input type="submit" class="primary" value="Submit" />
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="section-title">CSV naming</div>
+        <div id="csvNaming" class="form-grid">
+          <div class="field">
+            <label for="benchName">Bench name</label>
+            <input type="text" id="benchName" value="Bench Press" />
+          </div>
+          <div class="field">
+            <label for="squatName">Squat name</label>
+            <input type="text" id="squatName" value="Squat" />
+          </div>
+          <div class="field">
+            <label for="deadliftName">Deadlift name</label>
+            <input type="text" id="deadliftName" value="Deadlift" />
+          </div>
+          <div class="field">
+            <label for="dateName">Date header name</label>
+            <input type="text" id="dateName" value="Date" />
+          </div>
+          <div class="field">
+            <label for="weightName">Weight header name</label>
+            <input type="text" id="weightName" value="Weight" />
+          </div>
+          <div class="field">
+            <label for="repsName">Reps header name</label>
+            <input type="text" id="repsName" value="Reps" />
+          </div>
+          <div class="field">
+            <label for="exerciseName">Exercise header name</label>
+            <input type="text" id="exerciseName" value="Exercise" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Options</div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="bodyWeight">Body weight</label>
+            <input type="text" id="bodyWeight" value="80" />
+          </div>
+          <div class="field">
+            <label for="maxReps">Max reps for 1RM estimate</label>
+            <input type="text" id="maxReps" value="30" />
+          </div>
+          <div class="field">
+            <label for="SumoDeadliftName">Sumo deadlift name</label>
+            <input type="text" id="SumoDeadliftName" value="Sumo Deadlift" />
+          </div>
+          <div class="field checkbox">
+            <input type="checkbox" id="lbs" />
+            <label for="lbs">Body weight in lbs</label>
+          </div>
+          <div class="field checkbox">
+            <input type="checkbox" id="lbsLifted" />
+            <label for="lbsLifted">Lifts in lbs</label>
+          </div>
+          <div class="field checkbox">
+            <input type="checkbox" id="sex" />
+            <label for="sex">Female</label>
+          </div>
+          <div class="field checkbox">
+            <input type="checkbox" id="weightClassCheck" />
+            <label for="weightClassCheck">Limit results to weight class</label>
+          </div>
+          <div class="field checkbox">
+            <input type="checkbox" id="SumoDeadlift" />
+            <label for="SumoDeadlift">Merge sumo deadlift</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="card stats-output">
+        <div class="section-title">Results</div>
         <p id="maxValues">Max lifts</p>
         <p id="maxValues2">Max estimates</p>
         <p id="scores">Scores</p>
         <p id="scores2">Score estimates</p>
-    </div>
-    <div class="plot-container">
+      </div>
+
+      <div class="plot-grid">
         <div id="myPlot7"></div>
         <div id="myPlot8"></div>
         <div id="myPlot"></div>
@@ -102,8 +128,12 @@
         <div id="myPlot4"></div>
         <div id="myPlot5"></div>
         <div id="myPlot6"></div>
+      </div>
+      <div id="myPlot9"></div>
     </div>
-    <div id="myPlot9"></div>
-      <script src="https://cdn.plot.ly/plotly-2.25.2.min.js"></script>
+
+    <script src="src/navbar.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.25.2.min.js"></script>
+    <script src="src/index.js" type="module"></script>
   </body>
 </html>
