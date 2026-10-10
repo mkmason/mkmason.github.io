@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Arm & Weight Tracker</title>
     <link rel="stylesheet" href="theme.css" />
+    <script src="src/theme.js"></script>
     <style>
       .plots-container {
         display: grid;
@@ -67,12 +68,45 @@
       <div class="error-message" id="errorMessage"></div>
 
       <div class="card">
-        <div class="section-title">Settings</div>
-        <div class="form-grid">
+        <div class="section-title">Measurements file</div>
+        <input type="file" id="csvInput" accept=".csv" />
+        <div id="savedFile" class="saved-file" hidden></div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Add measurements for today</div>
+        <form id="manualForm" class="form-grid">
           <div class="field">
-            <label for="csvInput">Import CSV file</label>
-            <input type="file" id="csvInput" accept=".csv" />
+            <label for="manualBodyweight">Bodyweight (kg)</label>
+            <input type="number" id="manualBodyweight" min="0" step="0.1" />
           </div>
+          <div class="field">
+            <label for="manualUpperRight">Upper arm right (cm)</label>
+            <input type="number" id="manualUpperRight" min="0" step="0.1" />
+          </div>
+          <div class="field">
+            <label for="manualUpperLeft">Upper arm left (cm)</label>
+            <input type="number" id="manualUpperLeft" min="0" step="0.1" />
+          </div>
+          <div class="field">
+            <label for="manualForearmRight">Forearm right (cm)</label>
+            <input type="number" id="manualForearmRight" min="0" step="0.1" />
+          </div>
+          <div class="field">
+            <label for="manualForearmLeft">Forearm left (cm)</label>
+            <input type="number" id="manualForearmLeft" min="0" step="0.1" />
+          </div>
+          <div class="actions">
+            <button type="submit" class="primary">Add</button>
+          </div>
+        </form>
+        <p class="hint">Fill in any of the fields. Entries are added to today's date, on top of the file's measurements.</p>
+        <ul id="manualList" class="entry-list"></ul>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Goals and trends</div>
+        <div class="form-grid">
           <div class="field">
             <label for="upperArmGoal">Upper arm goal (cm)</label>
             <input type="number" id="upperArmGoal" value="43" min="0" step="0.1" />
@@ -82,6 +116,18 @@
             <input type="number" id="forearmGoal" value="33" min="0" step="0.1" />
           </div>
           <div class="field">
+            <label for="trendWeeks">Trend extension (weeks)</label>
+            <input type="number" id="trendWeeks" value="12" min="1" step="1" />
+          </div>
+          <div class="field">
+            <label for="dataTrendWeeks">Fit trend on last (weeks, 0 = all)</label>
+            <input type="number" id="dataTrendWeeks" value="12" min="0" step="1" />
+          </div>
+          <div class="field checkbox">
+            <input type="checkbox" id="showDataTrend" checked />
+            <label for="showDataTrend">Show trend from my data</label>
+          </div>
+          <div class="field">
             <label for="upperWeeklyIncrease">Upper weekly increase (cm)</label>
             <input type="number" id="upperWeeklyIncrease" value="0.05" min="0" step="0.01" />
           </div>
@@ -89,13 +135,9 @@
             <label for="forearmWeeklyIncrease">Forearm weekly increase (cm)</label>
             <input type="number" id="forearmWeeklyIncrease" value="0.025" min="0" step="0.01" />
           </div>
-          <div class="field">
-            <label for="trendWeeks">Trend extension (weeks)</label>
-            <input type="number" id="trendWeeks" value="12" min="1" step="1" />
-          </div>
           <div class="field checkbox">
             <input type="checkbox" id="showFutureTrend" />
-            <label for="showFutureTrend">Show future trend</label>
+            <label for="showFutureTrend">Show trend from weekly increases</label>
           </div>
         </div>
         <div class="actions" style="margin-top: 16px;">
@@ -109,6 +151,7 @@
     </div>
 
     <script src="src/navbar.js"></script>
+    <script src="src/storage.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.25.2.min.js"></script>
     <script src="src/ArmWeightTracker.js"></script>
   </body>

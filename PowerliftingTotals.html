@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Powerlifting Total Progression</title>
     <link rel="stylesheet" href="theme.css" />
+    <script src="src/theme.js"></script>
   </head>
   <body>
     <div class="navbar">
@@ -28,65 +29,97 @@
     <div class="page">
       <div class="page-header">
         <h1>Powerlifting Total Progression</h1>
-        <p>Upload your CSV file to see the powerlifting total progression. Made to work with FitNotes CSV naming by default.</p>
+        <p>Upload your training log (FitNotes CSV naming by default) or add lifts by hand to track your records and see where your total would place.</p>
       </div>
 
       <div class="card">
-        <div class="section-title">CSV file</div>
-        <form id="csvForm" class="actions">
-          <input type="file" id="csvInput" accept=".csv" />
-          <input type="submit" class="primary" value="Submit" />
+        <div class="section-title">Training log</div>
+        <input type="file" id="csvInput" accept=".csv" />
+        <div id="savedFile" class="saved-file" hidden></div>
+        <details class="settings-details">
+          <summary>CSV column and exercise names</summary>
+          <div id="csvNaming" class="form-grid" style="margin-top: 12px;">
+            <div class="field">
+              <label for="squatName">Squat name</label>
+              <input type="text" id="squatName" value="Squat" />
+            </div>
+            <div class="field">
+              <label for="benchName">Bench name</label>
+              <input type="text" id="benchName" value="Bench Press" />
+            </div>
+            <div class="field">
+              <label for="deadliftName">Deadlift name</label>
+              <input type="text" id="deadliftName" value="Deadlift" />
+            </div>
+            <div class="field">
+              <label for="SumoDeadliftName">Sumo deadlift name</label>
+              <input type="text" id="SumoDeadliftName" value="Sumo Deadlift" />
+            </div>
+            <div class="field">
+              <label for="dateName">Date header name</label>
+              <input type="text" id="dateName" value="Date" />
+            </div>
+            <div class="field">
+              <label for="exerciseName">Exercise header name</label>
+              <input type="text" id="exerciseName" value="Exercise" />
+            </div>
+            <div class="field">
+              <label for="weightName">Weight header name</label>
+              <input type="text" id="weightName" value="Weight" />
+            </div>
+            <div class="field">
+              <label for="repsName">Reps header name</label>
+              <input type="text" id="repsName" value="Reps" />
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Add a lift</div>
+        <form id="manualForm" class="form-grid">
+          <div class="field">
+            <label for="manualLift">Lift</label>
+            <select id="manualLift">
+              <option value="squat">Squat</option>
+              <option value="bench">Bench Press</option>
+              <option value="deadlift">Deadlift</option>
+              <option value="sumo">Sumo Deadlift</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="manualWeight">Weight</label>
+            <input type="number" id="manualWeight" min="0" step="0.5" required />
+          </div>
+          <div class="field">
+            <label for="manualReps">Reps</label>
+            <input type="number" id="manualReps" min="1" step="1" value="1" required />
+          </div>
+          <div class="actions">
+            <button type="submit" class="primary">Add lift</button>
+          </div>
         </form>
+        <p class="hint">Added lifts are dated now, in the same units as your log, and only change the charts when they beat a previous record.</p>
+        <ul id="manualList" class="entry-list"></ul>
       </div>
 
       <div class="card">
-        <div class="section-title">CSV naming</div>
-        <div id="csvNaming" class="form-grid">
-          <div class="field">
-            <label for="benchName">Bench name</label>
-            <input type="text" id="benchName" value="Bench Press" />
-          </div>
-          <div class="field">
-            <label for="squatName">Squat name</label>
-            <input type="text" id="squatName" value="Squat" />
-          </div>
-          <div class="field">
-            <label for="deadliftName">Deadlift name</label>
-            <input type="text" id="deadliftName" value="Deadlift" />
-          </div>
-          <div class="field">
-            <label for="dateName">Date header name</label>
-            <input type="text" id="dateName" value="Date" />
-          </div>
-          <div class="field">
-            <label for="weightName">Weight header name</label>
-            <input type="text" id="weightName" value="Weight" />
-          </div>
-          <div class="field">
-            <label for="repsName">Reps header name</label>
-            <input type="text" id="repsName" value="Reps" />
-          </div>
-          <div class="field">
-            <label for="exerciseName">Exercise header name</label>
-            <input type="text" id="exerciseName" value="Exercise" />
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="section-title">Options</div>
+        <div class="section-title">You</div>
         <div class="form-grid">
           <div class="field">
             <label for="bodyWeight">Body weight</label>
-            <input type="text" id="bodyWeight" value="80" />
+            <input type="number" id="bodyWeight" value="80" min="1" step="0.1" />
+          </div>
+          <div class="field">
+            <label for="sex">Sex (for scores and weight class)</label>
+            <select id="sex">
+              <option value="M">Male</option>
+              <option value="F">Female</option>
+            </select>
           </div>
           <div class="field">
             <label for="maxReps">Max reps for 1RM estimate</label>
-            <input type="text" id="maxReps" value="30" />
-          </div>
-          <div class="field">
-            <label for="SumoDeadliftName">Sumo deadlift name</label>
-            <input type="text" id="SumoDeadliftName" value="Sumo Deadlift" />
+            <input type="number" id="maxReps" value="30" min="1" step="1" />
           </div>
           <div class="field checkbox">
             <input type="checkbox" id="lbs" />
@@ -97,43 +130,61 @@
             <label for="lbsLifted">Lifts in lbs</label>
           </div>
           <div class="field checkbox">
-            <input type="checkbox" id="sex" />
-            <label for="sex">Female</label>
-          </div>
-          <div class="field checkbox">
-            <input type="checkbox" id="weightClassCheck" />
-            <label for="weightClassCheck">Limit results to weight class</label>
-          </div>
-          <div class="field checkbox">
-            <input type="checkbox" id="SumoDeadlift" />
-            <label for="SumoDeadlift">Merge sumo deadlift</label>
+            <input type="checkbox" id="removeSumo" />
+            <label for="removeSumo">Remove sumo (conventional deadlifts only)</label>
           </div>
         </div>
       </div>
 
-      <div class="card stats-output">
-        <div class="section-title">Results</div>
-        <p id="maxValues">Max lifts</p>
-        <p id="maxValues2">Max estimates</p>
-        <p id="scores">Scores</p>
-        <p id="scores2">Score estimates</p>
+      <div class="card">
+        <div class="section-title">Compare against</div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="compareSex">Lifters</label>
+            <select id="compareSex">
+              <option value="B">Male and female</option>
+              <option value="M">Male</option>
+              <option value="F">Female</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="country">Country</label>
+            <select id="country">
+              <option value="">World</option>
+            </select>
+          </div>
+          <div class="field checkbox">
+            <input type="checkbox" id="weightClassCheck" />
+            <label for="weightClassCheck">Only my weight class (otherwise everyone at or below my body weight)</label>
+          </div>
+        </div>
+        <p class="hint" id="oplInfo">Loading OpenPowerlifting data&hellip;</p>
       </div>
 
-      <div class="plot-grid">
-        <div id="myPlot7"></div>
-        <div id="myPlot8"></div>
-        <div id="myPlot"></div>
-        <div id="myPlot2"></div>
-        <div id="myPlot3"></div>
-        <div id="myPlot4"></div>
-        <div id="myPlot5"></div>
-        <div id="myPlot6"></div>
+      <div class="card">
+        <div class="section-title">Results</div>
+        <div id="results"><p class="hint">Upload your training log or add a lift to see your results.</p></div>
       </div>
-      <div id="myPlot9"></div>
+
+      <div id="progressPlots" class="plot-grid pairs" hidden>
+        <div class="card plot-card"><div id="myPlot7"></div></div>
+        <div class="card plot-card"><div id="myPlot8"></div></div>
+        <div class="card plot-card"><div id="myPlot"></div></div>
+        <div class="card plot-card"><div id="myPlot2"></div></div>
+        <div class="card plot-card"><div id="myPlot3"></div></div>
+        <div class="card plot-card"><div id="myPlot4"></div></div>
+        <div class="card plot-card"><div id="myPlot5"></div></div>
+        <div class="card plot-card"><div id="myPlot6"></div></div>
+      </div>
+
+      <div class="card plot-card">
+        <div id="myPlot9"></div>
+      </div>
     </div>
 
     <script src="src/navbar.js"></script>
+    <script src="src/storage.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.25.2.min.js"></script>
-    <script src="src/index.js" type="module"></script>
+    <script src="src/index.js"></script>
   </body>
 </html>

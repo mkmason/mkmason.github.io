@@ -1,7 +1,8 @@
 const form = document.querySelector("#csvForm");
 const csvFileInput = document.querySelector("#csvInput");
-let dateName = document.querySelector("#dateName").value;
-let exerciseName = document.querySelector("#exerciseName").value;
+const savedFileElement = document.querySelector("#savedFile");
+const LOG_KEY = "trainingLog"; // shared with the Powerlifting Totals page
+let trainingLog = null; // { name, text, savedAt }
 let filteredCSVTest = [];
 let weeklyVolumeTest = [];
 const gridHeaders = ['Back', 'Bicep', 'Forearm', 'Chest', 'Tricep', 'Shoulder', 'Quad', 'Glutes', 'Hamstring', 'Calves', 'Core'];
@@ -170,29 +171,33 @@ function loadGrid() {
         console.log("No saved data found.");
     }
 }
-function readCSV() {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        const file = csvFileInput.files[0];
-        if (!file) {
-            reject("No file selected");
-            return;
-        }
-        reader.onload = function(event) {
-            const fileContent = event.target.result;
-            const csvData = csvToArr(fileContent, ",");
-            let filteredCSV = csvData.map((item) => {
-                const categoryKey = Object.keys(item).find((key) => key.trim().toLowerCase() === "category");
-                const category = categoryKey ? item[categoryKey] : undefined;
-                return {date: item[dateName], exercise: item[exerciseName], category: category};
-            });
-            filteredCSVTest = filteredCSV;
-            resolve(filteredCSV);
-        };
-        reader.onerror = function() {
-            reject("Error reading file");
-        };
-        reader.readAsText(file);
+async function readCSV() {
+    const file = await AppStorage.readFileInput(csvFileInput);
+    if (file) {
+        trainingLog = await AppStorage.saveFile(LOG_KEY, file.name, file.text);
+        showSavedFile();
+    }
+    if (!trainingLog) {
+        throw "No file selected";
+    }
+    const dateName = document.querySelector("#dateName").value;
+    const exerciseName = document.querySelector("#exerciseName").value;
+    const csvData = csvToArr(trainingLog.text, ",");
+    let filteredCSV = csvData.map((item) => {
+        const categoryKey = Object.keys(item).find((key) => key.trim().toLowerCase() === "category");
+        const category = categoryKey ? item[categoryKey] : undefined;
+        return {date: item[dateName], exercise: item[exerciseName], category: category};
+    });
+    filteredCSVTest = filteredCSV;
+    return filteredCSV;
+}
+
+function showSavedFile() {
+    AppStorage.renderSavedFile(savedFileElement, trainingLog, async () => {
+        await AppStorage.deleteFile(LOG_KEY);
+        trainingLog = null;
+        csvFileInput.value = "";
+        showSavedFile();
     });
 }
 
@@ -224,6 +229,17 @@ function drawWeeklyPlots(){
             yaxis: { title: 'Volume' }
         };
 
-        Plotly.newPlot(plotId, [trace], layout);
+        Plotly.newPlot(plotId, [trace], SiteTheme.plotLayout(layout));
     });
 }
+csvFileInput.addEventListener("change", submitClicked);
+
+// Reuse the training log saved on this page or the Powerlifting Totals page
+AppStorage.persistFields("weeklyVolume.settings", ["dateName", "exerciseName"]);
+AppStorage.loadFile(LOG_KEY).then((record) => {
+    trainingLog = record;
+    showSavedFile();
+    if (trainingLog) {
+        submitClicked();
+    }
+});
