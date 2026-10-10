@@ -1,38 +1,70 @@
-<!DOCTYPE HTML>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>360 Image 2</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
-    <link rel="stylesheet" href="navbar.css" />
+    <link rel="stylesheet" href="theme.css" />
     <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
     
     <style>
-
-      </style>
+      body {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
+      #viewer {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      #panorama {
+        height: 50%;
+      }
+      #map {
+        height: 50%;
+        background-color: var(--surface-alt);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      /* Map markers are created in src/360image2.js */
+      #map button {
+        padding: 0;
+        border: none;
+        font-size: 0;
+      }
+    </style>
 </head>
 <body>
-  <div class="navbar">
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="PowerliftingTotals.html">Powerlifting Totals</a>
-      <a href="MuscleGroupWeeklyPlanner.html">Muscle Group Planner</a>
-      <a href="weeklyVolumeAnalysis.html">Weekly Volume</a>
-      <a href="ArmWeightTracker.html">Arm & Weight Tracker</a>
-      <a href="360image.html">360 Image</a>
-      <a href="360image2.html" class="active">360 Image 2</a>
-      <a href="6WeekBenchProgram.html">6 Week Bench</a>
-    </nav>
-  </div>
-  <div style="display: flex; flex-direction: column; height: 98vh;">
-  <div id="panorama" style="height: 50%;"></div>
-  <div id="map" style="height: 50%; background-color: #f0f0f0; display: flex; justify-content: center; align-items: center;">
+    <div class="navbar">
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="PowerliftingTotals.html">Powerlifting Totals</a>
+        <a href="MuscleGroupWeeklyPlanner.html">Muscle Group Planner</a>
+        <a href="weeklyVolumeAnalysis.html">Weekly Volume</a>
+        <a href="ArmWeightTracker.html">Arm & Weight Tracker</a>
+        <a href="6WeekBenchProgram.html">6 Week Bench</a>
+        <div class="dropdown">
+          <button type="button" class="dropdown-toggle active" aria-haspopup="true" aria-expanded="false">Legacy</button>
+          <div class="dropdown-menu">
+            <a href="360image.html">360 Image</a>
+            <a href="360image2.html" class="active">360 Image 2</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  <div id="viewer">
+  <div id="panorama"></div>
+  <div id="map">
     <img src="data/2dmap.jpg" alt="Map" style="max-width: 100%; max-height: 100%; position: relative;" id="mapImage"/>
   </div>
 </div>
 
 <!-- External JavaScript file linking -->
+<script src="src/navbar.js"></script>
 <script src="src/360image2.js"></script>
 </body>
 </html>

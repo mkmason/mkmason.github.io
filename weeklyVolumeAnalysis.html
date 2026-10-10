@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>Weekly Volume Analysis</title>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="navbar.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weekly Volume Analysis</title>
+    <link rel="stylesheet" href="theme.css" />
   </head>
   <body>
     <div class="navbar">
@@ -13,93 +14,95 @@
         <a href="MuscleGroupWeeklyPlanner.html">Muscle Group Planner</a>
         <a href="weeklyVolumeAnalysis.html" class="active">Weekly Volume</a>
         <a href="ArmWeightTracker.html">Arm & Weight Tracker</a>
-        <a href="360image.html">360 Image</a>
-        <a href="360image2.html">360 Image 2</a>
         <a href="6WeekBenchProgram.html">6 Week Bench</a>
+        <div class="dropdown">
+          <button type="button" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Legacy</button>
+          <div class="dropdown-menu">
+            <a href="360image.html">360 Image</a>
+            <a href="360image2.html">360 Image 2</a>
+          </div>
+        </div>
       </nav>
     </div>
-    <form id="csvForm">
-        <input type="file" id="csvInput" accept=".csv" />
-        <input type="button" value="Submit" onclick="submitClicked()"/>
-      </form>
-      <button id="readGrid" onclick="readGrid()">Read Grid</button>
-      <button id="saveGrid" onclick="saveGrid()">Save Grid</button>
-      <button id="loadGrid" onclick="loadGrid()">Load Grid</button>
-      <button id="calculateVolume" onclick="calculateWeeklyVolume()">Calculate Weekly Volume</button>
-      <a href="index.html" class="home-button">Home</a>
-        <div id ="csvNaming">
-            <label for="dateName">Date header name:</label>
+
+    <div class="page">
+      <div class="page-header">
+        <h1>Weekly Volume Analysis</h1>
+        <p>Upload a CSV file, assign each exercise to the muscle groups it trains, then calculate weekly volume.</p>
+      </div>
+
+      <div class="card">
+        <div class="section-title">CSV file</div>
+        <form id="csvForm" class="actions">
+          <input type="file" id="csvInput" accept=".csv" />
+          <input type="button" class="primary" value="Submit" onclick="submitClicked()" />
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="section-title">CSV naming</div>
+        <div id="csvNaming" class="form-grid">
+          <div class="field">
+            <label for="dateName">Date header name</label>
             <input type="text" id="dateName" value="Date" />
-            <label for="exerciseName">Exercise header name:</label>
+          </div>
+          <div class="field">
+            <label for="exerciseName">Exercise header name</label>
             <input type="text" id="exerciseName" value="Exercise" />
+          </div>
         </div>
-        <style>
-      .home-button {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        padding: 10px 15px;
-        background-color: #007BFF;
-        color: white;
-        text-decoration: none;
-        border-radius: 5px;
-        font-size: 14px;
-      }
-      .home-button:hover {
-        background-color: #0056b3;
-      }
-            </style>
-        <script src="https://cdn.plot.ly/plotly-2.25.2.min.js"></script>
-        <script src="src/weeklyVolumeAnalysis.js"></script>
-        <table id="dataGrid" border="1" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-          <thead>
-            <tr>
-              <th>Exercise Name</th>
-              <th>Back</th>
-              <th>Bicep</th>
-              <th>Forearms</th>
-              <th>Chest</th>
-              <th>Tricep</th>
-              <th>Shoulders</th>
-              <th>Quad</th>
-              <th>Glutes</th>
-              <th>Hamstring</th>
-              <th>Calves</th>
-              <th>Core</th>
-              <th>Exercise Name</th>
-            </tr>
-          </thead>
-          <tbody id="dataGridBody">
-          </tbody>
-        </table>
-        <style>
-          #dataGrid tbody tr:nth-child(odd) {
-            background-color: #f2f2f2;
-          }
-          #dataGrid tbody tr:nth-child(even) {
-            background-color: #e6e6e6;
-              }
-              #dataGrid thead th {
-              position: sticky;
-              top: 0;
-              background-color: #007BFF;
-              color: white;
-              z-index: 1;
-              }
-          </style>
-        </style>
-        <div id="plotsContainer" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px;">
-          <div id="plot1"></div>
-          <div id="plot2"></div>
-          <div id="plot3"></div>
-          <div id="plot4"></div>
-          <div id="plot5"></div>
-          <div id="plot6"></div>
-          <div id="plot7"></div>
-          <div id="plot8"></div>
-          <div id="plot9"></div>
-          <div id="plot10"></div>
-          <div id="plot11"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Exercise grid</div>
+        <div class="actions">
+          <button id="readGrid" type="button" onclick="readGrid()">Read Grid</button>
+          <button id="saveGrid" type="button" onclick="saveGrid()">Save Grid</button>
+          <button id="loadGrid" type="button" onclick="loadGrid()">Load Grid</button>
+          <button id="calculateVolume" type="button" class="primary" onclick="calculateWeeklyVolume()">Calculate Weekly Volume</button>
         </div>
-    </body>
+        <div class="table-wrapper" style="margin-top: 16px;">
+          <table id="dataGrid" class="data-table">
+            <thead>
+              <tr>
+                <th>Exercise Name</th>
+                <th>Back</th>
+                <th>Bicep</th>
+                <th>Forearms</th>
+                <th>Chest</th>
+                <th>Tricep</th>
+                <th>Shoulders</th>
+                <th>Quad</th>
+                <th>Glutes</th>
+                <th>Hamstring</th>
+                <th>Calves</th>
+                <th>Core</th>
+                <th>Exercise Name</th>
+              </tr>
+            </thead>
+            <tbody id="dataGridBody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="plotsContainer" class="plot-grid">
+        <div id="plot1"></div>
+        <div id="plot2"></div>
+        <div id="plot3"></div>
+        <div id="plot4"></div>
+        <div id="plot5"></div>
+        <div id="plot6"></div>
+        <div id="plot7"></div>
+        <div id="plot8"></div>
+        <div id="plot9"></div>
+        <div id="plot10"></div>
+        <div id="plot11"></div>
+      </div>
+    </div>
+
+    <script src="src/navbar.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.25.2.min.js"></script>
+    <script src="src/weeklyVolumeAnalysis.js"></script>
+  </body>
 </html>

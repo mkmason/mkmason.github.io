@@ -1,92 +1,40 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>Arm & Weight Tracker</title>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="navbar.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Arm & Weight Tracker</title>
+    <link rel="stylesheet" href="theme.css" />
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-        background-color: #f5f5f5;
-      }
-      
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        background-color: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      }
-      
-      h1 {
-        color: #333;
-        text-align: center;
-      }
-      
-      .input-section {
-        margin-bottom: 30px;
-        padding: 15px;
-        background-color: #f9f9f9;
-        border-radius: 5px;
-      }
-      
-      .input-section label {
-        font-weight: bold;
-        margin-right: 10px;
-      }
-      
-      .input-section input[type="file"],
-      .input-section input[type="button"] {
-        padding: 8px 15px;
-        margin-right: 10px;
-      }
-      
-      .input-section input[type="button"] {
-        background-color: #007BFF;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-weight: bold;
-      }
-      
-      .input-section input[type="button"]:hover {
-        background-color: #0056b3;
-      }
-      
-      
       .plots-container {
         display: grid;
         grid-template-columns: 1fr;
-        gap: 30px;
-        margin-top: 30px;
+        gap: 20px;
       }
-      
+
+      .plots-container:empty {
+        display: none;
+      }
+
       .plot-section {
-        background-color: #f9f9f9;
-        padding: 15px;
-        border-radius: 5px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 20px;
+        box-shadow: var(--shadow);
       }
-      
+
       .plot-section h2 {
-        color: #333;
         margin-top: 0;
       }
-      
+
       .plot {
         width: 100%;
         height: 500px;
       }
-      
-      .error-message {
-        color: #d32f2f;
-        background-color: #ffebee;
-        padding: 15px;
-        border-radius: 5px;
-        margin-bottom: 20px;
+
+      #errorMessage,
+      #projectionStatus {
         display: none;
       }
     </style>
@@ -99,47 +47,68 @@
         <a href="MuscleGroupWeeklyPlanner.html">Muscle Group Planner</a>
         <a href="weeklyVolumeAnalysis.html">Weekly Volume</a>
         <a href="ArmWeightTracker.html" class="active">Arm & Weight Tracker</a>
-        <a href="360image.html">360 Image</a>
-        <a href="360image2.html">360 Image 2</a>
         <a href="6WeekBenchProgram.html">6 Week Bench</a>
+        <div class="dropdown">
+          <button type="button" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Legacy</button>
+          <div class="dropdown-menu">
+            <a href="360image.html">360 Image</a>
+            <a href="360image2.html">360 Image 2</a>
+          </div>
+        </div>
       </nav>
     </div>
-    
-    <div class="container">
-      <h1>Body Measurement Tracker</h1>
-      
-      <div class="error-message" id="errorMessage"></div>
-      
-      <div class="input-section">
-        <label for="csvInput">Import CSV File:</label>
-        <input type="file" id="csvInput" accept=".csv" />
-        
-        <label for="upperArmGoal">Upper Arm Goal (cm):</label>
-        <input type="number" id="upperArmGoal" value="43" min="0" step="0.1" style="width: 80px;" />
-        
-        <label for="forearmGoal">Forearm Goal (cm):</label>
-        <input type="number" id="forearmGoal" value="33" min="0" step="0.1" style="width: 80px;" />
 
-        <label for="upperWeeklyIncrease">Upper Weekly Increase (cm):</label>
-        <input type="number" id="upperWeeklyIncrease" value="0.05" min="0" step="0.01" style="width: 80px;" />
-
-        <label for="forearmWeeklyIncrease">Forearm Weekly Increase (cm):</label>
-        <input type="number" id="forearmWeeklyIncrease" value="0.025" min="0" step="0.01" style="width: 80px;" />
-
-        <label for="trendWeeks">Trend Extension (weeks):</label>
-        <input type="number" id="trendWeeks" value="12" min="1" step="1" style="width: 80px;" />
-
-        <label for="showFutureTrend">Future Trend:</label>
-        <input type="checkbox" id="showFutureTrend" />
-        
-        <input type="button" value="Generate Plots" onclick="generatePlots()"/>
+    <div class="page">
+      <div class="page-header">
+        <h1>Body Measurement Tracker</h1>
+        <p>Import a CSV of arm measurements and bodyweight to plot progress towards your goals.</p>
       </div>
 
-      <div class="input-section" id="projectionStatus" style="display: none;"></div>
-      
+      <div class="error-message" id="errorMessage"></div>
+
+      <div class="card">
+        <div class="section-title">Settings</div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="csvInput">Import CSV file</label>
+            <input type="file" id="csvInput" accept=".csv" />
+          </div>
+          <div class="field">
+            <label for="upperArmGoal">Upper arm goal (cm)</label>
+            <input type="number" id="upperArmGoal" value="43" min="0" step="0.1" />
+          </div>
+          <div class="field">
+            <label for="forearmGoal">Forearm goal (cm)</label>
+            <input type="number" id="forearmGoal" value="33" min="0" step="0.1" />
+          </div>
+          <div class="field">
+            <label for="upperWeeklyIncrease">Upper weekly increase (cm)</label>
+            <input type="number" id="upperWeeklyIncrease" value="0.05" min="0" step="0.01" />
+          </div>
+          <div class="field">
+            <label for="forearmWeeklyIncrease">Forearm weekly increase (cm)</label>
+            <input type="number" id="forearmWeeklyIncrease" value="0.025" min="0" step="0.01" />
+          </div>
+          <div class="field">
+            <label for="trendWeeks">Trend extension (weeks)</label>
+            <input type="number" id="trendWeeks" value="12" min="1" step="1" />
+          </div>
+          <div class="field checkbox">
+            <input type="checkbox" id="showFutureTrend" />
+            <label for="showFutureTrend">Show future trend</label>
+          </div>
+        </div>
+        <div class="actions" style="margin-top: 16px;">
+          <input type="button" class="primary" value="Generate Plots" onclick="generatePlots()" />
+        </div>
+      </div>
+
+      <div class="card" id="projectionStatus"></div>
+
       <div class="plots-container" id="plotsContainer"></div>
     </div>
-    
+
+    <script src="src/navbar.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.25.2.min.js"></script>
     <script src="src/ArmWeightTracker.js"></script>
   </body>

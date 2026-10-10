@@ -1,18 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <title>360 Image</title>
         <meta charset="UTF-8" />
-        <link rel="stylesheet" href="navbar.css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="theme.css" />
         <style>
         body {
             display: flex;
             flex-direction: column;
-            margin: 0;
+            height: 100vh;
         }
         #image-container {
             width: 100%;
-            height: calc(100vh - 65px);
+            flex: 1;
+            min-height: 0;
             overflow: hidden;
             position: relative;
         }
@@ -31,9 +33,14 @@
         <a href="MuscleGroupWeeklyPlanner.html">Muscle Group Planner</a>
         <a href="weeklyVolumeAnalysis.html">Weekly Volume</a>
         <a href="ArmWeightTracker.html">Arm & Weight Tracker</a>
-        <a href="360image.html" class="active">360 Image</a>
-        <a href="360image2.html">360 Image 2</a>
         <a href="6WeekBenchProgram.html">6 Week Bench</a>
+        <div class="dropdown">
+          <button type="button" class="dropdown-toggle active" aria-haspopup="true" aria-expanded="false">Legacy</button>
+          <div class="dropdown-menu">
+            <a href="360image.html" class="active">360 Image</a>
+            <a href="360image2.html">360 Image 2</a>
+          </div>
+        </div>
       </nav>
     </div>
     <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
@@ -49,6 +56,7 @@
                 </a-camera>
             </a-scene>
         </div>
+        <script src="src/navbar.js"></script>
         <script src="src/360image.js"></script>
     </body>
 </html>
